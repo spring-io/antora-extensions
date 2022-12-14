@@ -1,6 +1,8 @@
 = Spring.io Antora Extensions
+:esc-https: \https
 ifdef::env-github[]
 :important-caption: :exclamation:
+:esc-https: pass:q[[.esc]#https#]
 endif::[]
 ifdef::env-browser[]
 :toc: right
@@ -69,7 +71,7 @@ May be provided by the `BUILD_VERSION` environment variable.
 If not specified, the version will be retrieved from the [.path]_gradle.properties_ file at the root of the repository at the specified refname.
 Ideally, this option should be set by the workflow that invokes the partial build.
 
-rawgit_url (default: [.escape]#\https:#//raw.githubusercontent.com)::
+rawgit_url (default: {esc-https}://raw.githubusercontent.com)::
 The base URL to use to retrieve a file from the git repository.
 This lookup happens when the version is not specified.
 
