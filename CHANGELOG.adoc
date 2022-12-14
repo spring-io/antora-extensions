@@ -1,0 +1,9 @@
+= Changelog
+:url-repo: https://github.com/spring-io/antora-extensions
+
+This document provides a summary of all notable changes to this project by release.
+For a detailed view of what's changed, refer to the {url-repo}/commits[commit history] of this project.
+
+== Unreleased
+
+_Initial prerelease._

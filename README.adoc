@@ -1,0 +1,234 @@
+= Spring.io Antora Extensions
+ifdef::env-github[]
+:important-caption: :exclamation:
+endif::[]
+ifdef::env-browser[]
+:toc: right
+:toc-title: Contents
+:toclevels: 2
+endif::[]
+:url-project: https://github.com/spring-io/antora-extensions
+:url-chai: http://chaijs.com/api/bdd/
+:url-eslint: https://eslint.org
+:url-git: https://git-scm.com
+:url-git-dl: {url-git}/downloads
+:url-mocha: https://mochajs.org
+:url-nodejs: https://nodejs.org
+:url-nodejs-releases: https://github.com/nodejs/Release#release-schedule
+:url-nvm: https://github.com/creationix/nvm
+:url-nvm-install: {url-nvm}#installation
+:url-standardjs: https://standardjs.com/rules.html
+
+This library provides Antora extensions that support the Spring documentation.
+
+== Prerequisites
+
+In order to use this extension, you must have Node.js 16 or higher installed on your machine.
+These extensions are intended to be used with Antora.
+Be sure to register them as Antora extensions in your playbook, not as AsciiDoc extensions.
+
+Use the following command to install the @springio/antora-extensions package into your project:
+
+[,console]
+----
+$ npm i @springio/antora-extensions
+----
+
+ifndef::env-npm[]
+To use the development version instead, refer to the <<Development Quickstart>>.
+
+endif::[]
+== Extensions
+
+This section documents the Antora extensions that are provided by this library and how to configure them.
+
+=== Partial Build
+
+*require name:* @springio/antora-extensions/partial-build-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+The purpose of this extension is to reconfigure Antora to run a partial build, if possible.
+A partial build is build that only generates a site from a single refname, and hence a single version.
+The complete version inventory, as well as references to resources in other versions, are resolved from the site manifest produced by the Antora Atlas extension.
+Once the partial build is complete, the assumption is that the files generated will synchronized with the full site.
+
+If a request is made to build a version which has not already been published, or the prerelease status of that version has changed since the last full build, the extension will revert to a full build.
+It will also generate a [.path]_.full-build_ file in the output directory as a hint to the sync script that a full build has occurred.
+
+The extension accepts several configuration options:
+
+refname (required)::
+The single refname to build (e.g., main).
+May be provided by the `BUILD_REFNAME` environment variable.
+
+version::
+The documentation version that corresponds to the refname.
+This information is used to determine if the version provided by the refname is present in the site manifest.
+May be provided by the `BUILD_VERSION` environment variable.
+If not specified, the version will be retrieved from the [.path]_gradle.properties_ file at the root of the repository at the specified refname.
+Ideally, this option should be set by the workflow that invokes the partial build.
+
+rawgit_url (default: \https://raw.githubusercontent.com)::
+The base URL to use to retrieve a file from the git repository.
+This lookup happens when the version is not specified.
+
+By default, the site manifest will be retrieved from `\{site-url}/site-manifest.json`, where `site-url` is the value of the `site.url` key in the playbook (i.e., the production site URL).
+You can configure this extension (and, in turn, Antora Atlas) to use a different site manifest by passing the `primary-site-manifest-url` AsciiDoc attribute.
+This attribute can be set in the playbook.
+
+=== Tabs Migration
+
+*require name:* @springio/antora-extensions/tabs-migration-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+The purpose of this extension is to migrate the AsciiDoc source from using Spring tabs to using https://github.com/asciidoctor/asciidoctor-tabs[Asciidoctor tabs].
+It also has the ability to unwrap unneeded example blocks.
+
+The extension accepts several configuration options:
+
+save_result (default: false)::
+A boolean option that controls whether the migrated source is written back to the worktree.
+This option is only relevant when the file is read from a local directory, which is the case for git references that have an associated worktree.
+
+unwrap_example_block (default: tabs)::
+An enumeration option that controls when example block delimiters are removed.
+
+* `never` - Never remove example block delimiters
+* `tabs` - Migrate example block that contains tabs to a tabs block
+* `always` - Remove example block delimiters if example block has no metadata and only contains a single child
+
+tabs_delimiter_length (default: 6)::
+An integer option that controls the length of the delimiter for a tabs block.
+The recommended value is 6.
+You can also set it to 4 to use the conventional length.
+
+normalize (default: false)::
+A boolean option that controls whether sequential empty lines are collapsed into a single empty line.
+Regardless of the value of this option, the extension will relocate block metadata lines to be directly above the block.
+The extension will also insert an empty line between tabs if one does not exist.
+
+ifndef::env-npm[]
+== Development Quickstart
+
+This section provides information on how to develop on this project.
+
+=== Prerequisites
+
+To build this project and run the tests, you need the following software installed on your computer:
+
+* {url-git}[git] (command: `git`)
+* {url-nodejs}[Node.js] (commands: `node`, `npm`, and `npx`)
+
+==== git
+
+First, make sure you have git installed.
+
+ $ git --version
+
+If not, {url-git-dl}[download and install] the git package for your system.
+
+==== Node.js
+
+Next, make sure that you have Node.js installed (which also provides npm and npx).
+
+ $ node --version
+
+If this command fails with an error, you don't have Node.js installed.
+If the command doesn't report an {url-nodejs-releases}[active LTS version] of Node.js, it means you don't have a suitable version of Node.js installed.
+
+We strongly recommend that you use {url-nvm}[nvm] (Node Version Manager) to manage your Node.js installation(s).
+Follow the {url-nvm-install}[nvm installation instructions] to set up nvm on your machine.
+
+Once you've installed nvm, open a new terminal and install Node.js 16 using the following command:
+
+ $ nvm install 16
+
+You can switch to this version of Node.js at any time using the following command:
+
+ $ nvm use 16
+
+To make Node.js 16 the default in new terminals, type:
+
+ $ nvm alias default 16
+
+Now that you have git and Node.js installed, you're ready to start developing on this project.
+
+=== Clone Project
+
+Clone the project using git:
+
+[subs=attributes+]
+ $ git clone {url-project} &&
+   cd "`basename $_`"
+
+The previous chained command clones the project then switches to the project folder on your filesystem.
+Stay in this project folder when running all subsequent commands.
+
+=== Install Dependencies
+
+Use npm to install the project's dependencies inside the project.
+In your terminal, run the following command:
+
+ $ npm ci
+
+This command installs the dependencies listed in [.path]_package-lock.json_ into the [.path]_node_modules/_ folder inside the project.
+This folder should _not_ be committed to the source control repository.
+
+=== Run Tests
+
+This project uses {url-mocha}[mocha] to run the tests and the assertion library {url-chai}[chai] to assert outcomes.
+To run the test suite, use:
+
+ $ npm test
+
+By default, `npm test` will run all tests.
+You can run the tests in a single test suite by passing the path of that test suite as the final argument:
+
+ $ npm test test/partial-build-extension-test.js
+
+You can also run a single test by adding `.only` to the `it` function (e.g., `it.only`).
+If `it.only` is present, `npm test` will only run that test.
+
+To generate a coverage report when running the tests (enabled by default in CI), run the `coverage` script instead:
+
+ $ npm run coverage
+
+A coverage report shows the lines, statements, and branches that the tests exercise.
+You can view the coverage report by opening the HTML file [.path]_reports/lcov-report/index.html_ in your browser.
+
+=== Verify Code Style
+
+This project adheres to the {url-standardjs}[JavaScript Standard style] with some exceptions defined in [.path]_.eslintrc_.
+The code style is verified using {url-eslint}[ESLint].
+
+To verify that the style of the code is correct, run the following command:
+
+ $ npm run lint
+
+To format the code to adhere to the code style, run the following command:
+
+ $ npm run format
+
+The CI workflow will fail if there are pending code style changes, so be sure to run it before you push a change.
+
+=== Use Project From Source
+
+If you want to use the project locally before it is published, you can specify the path to the project as the version in [.path]_package.json_.
+
+[,json]
+----
+"dependencies": {
+  "@springio/antora-extensions": "/path/to/project"
+}
+----
+
+When you run `npm i` in that project, npm will set up a symlink to the location of this project.
+Any changes to this project will take effect immediately.
+
+endif::[]
+== License
+
+Use of this software is granted under the terms of the https://www.apache.org/licenses/LICENSE-2.0[Apache License, Version 2.0] (Apache-2.0).
+ifdef::env-github[See link:LICENSE[] to find the full license text.]

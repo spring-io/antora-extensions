@@ -1,0 +1,35 @@
+{
+  "$id": "https://schemas.antora.org/site-manifest/1-0-0/draft-01",
+  "generated": "2022-12-01T01:30:00Z",
+  "url": "https://docs.example.org",
+  "components": {
+    "ROOT": {
+      "title": "Spring Security",
+      "latest": "6.0.0",
+      "versions": {
+        "6.1.0": {
+          "prerelease": true,
+          "displayVersion": "6.1.0-SNAPSHOT",
+          "url": "/6.1/index.html",
+          "pages": [
+            {
+              "path": "index.adoc",
+              "url": "/6.1/index.html",
+              "title": "Start Page"
+            }
+          ]
+        },
+        "6.0.0": {
+          "url": "/index.html",
+          "pages": [
+            {
+              "path": "index.adoc",
+              "url": "/index.html",
+              "title": "Start Page"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
