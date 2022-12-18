@@ -2,6 +2,7 @@
 'use strict'
 
 const { cleanDir, expect, startWebServer, trapAsyncError } = require('./harness')
+const fsp = require('node:fs/promises')
 const ospath = require('node:path')
 const { name: packageName } = require('#package')
 
@@ -26,7 +27,7 @@ describe('partial-build-extension', () => {
   })
 
   const createIsomorphicGitStub = () => {
-    return { listRemotes: async () => [{ remote: 'origin', url: 'https://github.com/org/repo' }] }
+    return { listRemotes: async () => [{ remote: 'origin', url: repositoryUrl }] }
   }
 
   const withEnv = async (env, cb) => {
@@ -41,6 +42,7 @@ describe('partial-build-extension', () => {
 
   let generatorContext
   let playbook
+  let repositoryUrl
 
   beforeEach(() => {
     generatorContext = createGeneratorContext()
@@ -72,13 +74,14 @@ describe('partial-build-extension', () => {
     let output
 
     beforeEach(async () => {
+      repositoryUrl = 'https://github.com/org/repo'
       playbook = {
         site: {},
         asciidoc: { attributes: {} },
         content: {
           sources: [
             {
-              url: 'https://github.com/spring-projects/spring-security',
+              url: repositoryUrl,
               branches: ['main', '6.*'],
               tags: ['6.*'],
               startPath: 'docs',
@@ -99,11 +102,33 @@ describe('partial-build-extension', () => {
 
     after(() => cleanDir(WORK_DIR))
 
-    const runScenario = async ({ siteUrl, refname, version, rawgitUrl, attributes, expectedRefs, expectedOutput }) => {
+    const runScenario = async ({
+      siteUrl,
+      refname,
+      version,
+      rawgitUrl,
+      attributes,
+      expectedRefs,
+      expectedOutput,
+      initWorktree,
+    }) => {
       const expected = [Object.assign({}, playbook.content.sources[0], expectedRefs)]
       attributes ??= { 'primary-site-manifest-url': ospath.join(FIXTURES_DIR, 'site-manifest.json') }
       if (siteUrl) playbook.site.url = siteUrl
       playbook.dir = WORK_DIR
+      if (initWorktree) {
+        if (initWorktree === 'linked') {
+          playbook.dir = ospath.join(WORK_DIR, 'docs-build')
+          const mainWorktreeDir = ospath.join(WORK_DIR, 'main')
+          const gitdir = ospath.join(mainWorktreeDir, '.git/worktrees/docs-build')
+          await fsp.mkdir(playbook.dir)
+          await fsp.writeFile(ospath.join(playbook.dir, '.git'), `gitdir: ${gitdir}\n`, 'utf-8')
+          await fsp.mkdir(gitdir, { recursive: true })
+          await fsp.writeFile(ospath.join(gitdir, 'commondir'), '../..\n', 'utf-8')
+        } else {
+          await fsp.mkdir(ospath.join(WORK_DIR, '.git'))
+        }
+      }
       Object.assign(playbook.asciidoc.attributes, attributes)
       const config = {}
       if (refname) config.refname = refname
@@ -112,6 +137,7 @@ describe('partial-build-extension', () => {
       ext.register.call(generatorContext, Object.keys(config).length ? { config } : {})
       generatorContext.updateVariables({ playbook })
       await generatorContext.playbookBuilt(generatorContext.variables)
+      if (initWorktree) await fsp.rm(ospath.join(playbook.dir, '.git'), { recursive: true })
       expect(playbook.content.sources).to.eql(expected)
       if (expectedRefs) {
         expect(playbook.asciidoc.attributes['primary-site-url']).to.equal('.')
@@ -209,6 +235,27 @@ describe('partial-build-extension', () => {
           refname: '6.0.0',
           rawgitUrl: httpServerUrl,
           expectedRefs: { branches: [], tags: ['6.0.0'] },
+          initWorktree: true,
+        })
+      })
+
+      it('should extract repository path from non-https repository URL with .git file extension', async () => {
+        playbook.content.sources[0].url = repositoryUrl = 'git@github.com:org/repo.git'
+        await runScenario({
+          refname: '6.0.0',
+          rawgitUrl: httpServerUrl,
+          expectedRefs: { branches: [], tags: ['6.0.0'] },
+          initWorktree: true,
+        })
+      })
+
+      it('should look up version in git repository with linked worktree if not specified', async () => {
+        playbook.content.sources[0].url = repositoryUrl = 'https://git@gitlab.com/org/repo.git'
+        await runScenario({
+          refname: '6.0.0',
+          rawgitUrl: httpServerUrl,
+          expectedRefs: { branches: [], tags: ['6.0.0'] },
+          initWorktree: 'linked',
         })
       })
 
@@ -230,7 +277,7 @@ describe('partial-build-extension', () => {
           })
           return simpleGet
         }
-        await runScenario({ refname: '6.0.0', expectedRefs: { branches: [], tags: ['6.0.0'] } })
+        await runScenario({ refname: '6.0.0', expectedRefs: { branches: [], tags: ['6.0.0'] }, initWorktree: true })
         expect(simpleGet.requests).to.eql(['https://raw.githubusercontent.com/org/repo/6.0.0/gradle.properties'])
       })
     })
