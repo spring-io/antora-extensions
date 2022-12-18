@@ -48,9 +48,9 @@
     "chai-fs": "~2.0",
     "chai-spies": "~1.0",
     "dirty-chai": "~2.0",
-    "eslint": "~8.29",
+    "eslint": "~8.30",
     "eslint-config-standard": "~17.0",
-    "mocha": "~10.1",
+    "mocha": "~10.2",
     "nyc": "~15.1",
     "prettier-eslint": "~15.0",
     "simple-get": "latest"
