@@ -58,6 +58,11 @@ Once the partial build is complete, the assumption is that the files generated w
 If a request is made to build a version which has not already been published, or the prerelease status of that version has changed since the last full build, the extension will revert to a full build.
 It will also generate a [.path]_.full-build_ file in the output directory as a hint to the sync script that a full build has occurred.
 
+You can give this extension a try by running these commands:
+
+ $ git clone --depth=1 -b docs-build https://github.com/spring-projects/spring-security spring-security-docs-build
+   BUILD_REFNAME=main ./gradlew antora
+
 The extension accepts several configuration options:
 
 refname (required)::
