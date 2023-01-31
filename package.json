@@ -16,9 +16,9 @@
     "node": ">=16.0.0"
   },
   "scripts": {
+    "build": "npm test && npm run lint",
     "coverage": "nyc _mocha",
     "coverage-strict": "nyc --branches=100 --lines=100 _mocha",
-    "build": "npm test && npm run lint",
     "format": "node npm/format.js lib,test,npm",
     "lint": "eslint \"{lib,test,npm}/**/*.js\"",
     "prepublishOnly": "npx -y downdoc --prepublish",
@@ -38,10 +38,6 @@
   "files": [
     "lib"
   ],
-  "keywords": [
-    "antora",
-    "extension"
-  ],
   "devDependencies": {
     "@asciidoctor/tabs": "latest",
     "chai": "~4.3",
@@ -55,12 +51,17 @@
     "prettier-eslint": "~15.0",
     "simple-get": "latest"
   },
+  "keywords": [
+    "antora",
+    "antora-extension",
+    "asciidoc",
+    "extension"
+  ],
   "nyc": {
     "all": true,
     "cacheDir": "node_modules/.cache/nyc",
-    "checkCoverage": true,
     "include": [
-      "lib/*.js"
+      "lib/**/*.js"
     ],
     "reporter": [
       "cobertura",
