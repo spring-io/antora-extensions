@@ -72,8 +72,8 @@ const startWebServer = (hostname, rootDir) => {
 }
 
 // NOTE async keyword only needed on fn declaration if the function it calls does not always return a Promise
-const trapAsyncError = (fn) =>
-  fn().then(
+const trapAsyncError = (fn, ...args) =>
+  fn(...args).then(
     (returnValue) => () => returnValue,
     (err) => () => {
       throw err

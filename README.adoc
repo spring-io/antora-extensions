@@ -84,6 +84,125 @@ By default, the site manifest will be retrieved from `\{site-url}/site-manifest.
 You can configure this extension (and, in turn, Antora Atlas) to use a different site manifest by passing the `primary-site-manifest-url` AsciiDoc attribute.
 This attribute can be set in the playbook.
 
+=== Publish Docsearch Config
+
+*require name:* @springio/antora-extensions/publish-docsearch-config-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+The purpose of this extension is to generate and publish the docsearch configuration that is used by Algolia.
+It will produce a file similar to the following at `${site.url}/docsearch-config.json`
+
+[source,json]
+----
+{
+  "index_name": "spring-security-docs",
+  "start_urls": [
+    {
+      "url": "https://docs.spring.io/spring-security/reference/6.1/",
+      "extra_attributes": {
+        "component": "security",
+        "version": "6.1.0",
+        "version_rank": 2
+      }
+    },
+    {
+      "url": "https://docs.spring.io/spring-security/reference/(?:$|index.html$|[a-z].*)",
+      "extra_attributes": {
+        "component": "security",
+        "version": "6.0.2",
+        "version_rank": 1
+      }
+    },
+    {
+      "url": "https://docs.spring.io/spring-security/reference/5.8/",
+      "extra_attributes": {
+        "component": "security",
+        "version": "5.8.2",
+        "version_rank": 2
+      }
+    },
+    {
+      "url": "https://docs.spring.io/spring-security/reference/5.7/",
+      "extra_attributes": {
+        "component": "security",
+        "version": "5.7.7",
+        "version_rank": 2
+      }
+    },
+    {
+      "url": "https://docs.spring.io/spring-security/reference/5.6/",
+      "extra_attributes": {
+        "component": "security",
+        "version": "5.6.10",
+        "version_rank": 2
+      }
+    }
+  ],
+  "sitemap_urls": [
+    "https://docs.spring.io/spring-security/reference/sitemap.xml"
+  ],
+  "scrape_start_urls": true,
+  "stop_urls": [
+  ],
+  "selectors": {
+    "default": {
+      "lvl0": {
+        "global": true,
+        "selector": ".nav-panel-explore .context .title, .nav-panel-explore .context .version"
+      },
+      "lvl1": ".doc > h1.page",
+      "lvl2": ".doc .sect1 > h2:first-child",
+      "lvl3": ".doc .sect2 > h3:first-child",
+      "lvl4": ".doc .sect3 > h4:first-child",
+      "text": ".doc p, .doc dt, .doc td.content, .doc th.tableblock"
+    }
+  },
+  "selectors_exclude": [
+    "#section-summary"
+  ],
+  "min_indexed_level": 1,
+  "custom_settings": {
+    "advancedSyntax": true,
+    "attributesForFaceting": [
+      "component",
+      "version"
+    ],
+    "attributesToRetrieve": [
+      "anchor",
+      "content",
+      "hierarchy",
+      "url",
+      "component",
+      "version"
+    ],
+    "attributesToSnippet": [
+      "content:25"
+    ],
+    "customRanking": [
+      "desc(weight.page_rank)",
+      "asc(version_rank)",
+      "desc(weight.level)",
+      "asc(weight.position)"
+    ]
+  }
+}
+----
+
+The extension accepts several configuration options:
+
+templatePath (default is to use the default template)::
+Allows overriding the default handlebars template used to generate the configuration.
+
+indexName (default is the latest version's name + -docs)::
+This allows overriding the `index_name` property of the configuration.
+The default is to use the name of the latest version + `-docs`.
+
+rootComponentName (default is to error on ROOT component name)::
+If the name of the component is `ROOT` the value of `rootComponentName` will be used for the component in the generated configuration.
+The default is that if a component is named `ROOT` and `rootComponentName` is undefined an error will occur.
+
+
 === Tabs Migration
 
 *require name:* @springio/antora-extensions/tabs-migration-extension
