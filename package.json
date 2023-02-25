@@ -29,6 +29,7 @@
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
+    "./docsearch-config.json.hbs": "./lib/docsearch-config.json.hbs",
     "./partial-build-extension": "./lib/partial-build-extension.js",
     "./publish-docsearch-config-extension": "./lib/publish-docsearch-config-extension.js",
     "./tabs-migration-extension": "./lib/tabs-migration-extension.js"
