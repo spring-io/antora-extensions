@@ -191,14 +191,14 @@ It will produce a file similar to the following at `${site.url}/docsearch-config
 
 The extension accepts several configuration options:
 
-templatePath (default is to use the default template)::
+template_path (default is to use the default template)::
 Allows overriding the default handlebars template used to generate the configuration.
 
-indexName (default is the latest version's name + -docs)::
+index_name (default is the latest version's name + -docs)::
 This allows overriding the `index_name` property of the configuration.
 The default is to use the name of the latest version + `-docs`.
 
-rootComponentName (default is to error on ROOT component name)::
+root_component_name (default is to error on ROOT component name)::
 If the name of the component is `ROOT` the value of `rootComponentName` will be used for the component in the generated configuration.
 The default is that if a component is named `ROOT` and `rootComponentName` is undefined an error will occur.
 
