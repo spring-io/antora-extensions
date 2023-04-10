@@ -44,6 +44,21 @@ endif::[]
 
 This section documents the Antora extensions that are provided by this library and how to configure them.
 
+=== Latest Version
+
+*require name:* @springio/antora-extensions/latest-version-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This extension can ensure that old tags are no longer built.
+The extension ensures all branches continue to build.
+It will remove all old patch releases by preserving the largest `patch` for each `major.minor` segment of a tag in the format of `${major}.${minor}.${patch}` or `v${major}.${minor}.${patch}`.
+
+The extension also maps the latest release to a URL that leverages only the `${major}.${minor}` segments and the latest SNAPSHOT to a URL of `${major}.${minor}-SNAPSHOT`.
+
+NOTE: Filtering is intentionally performed on the tags rather than versions because the Spring team calculates versions by extracting the information from the Java based build.
+The amount of time to calculate the version is small, but adds up with lots of tags, and we'd like to avoid this computational cost on tags that are not being used.
+
 === Partial Build
 
 *require name:* @springio/antora-extensions/partial-build-extension
