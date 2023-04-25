@@ -213,7 +213,7 @@ describe('partial-build-extension', () => {
               version: '6.1.0-SNAPSHOT',
             })
           )
-        ).to.throw('404')
+        ).to.throw(`${httpServerUrl}/no-such-manifest.json returned response code 404 (Not Found)`)
       })
 
       it('should throw error when downloading playbook from primary site if connect refused', async () => {
