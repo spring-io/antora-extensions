@@ -30,11 +30,13 @@
   "exports": {
     ".": "./lib/index.js",
     "./docsearch-config.json.hbs": "./lib/docsearch-config.json.hbs",
+    "./inject-collector-cache-config-extension": "./lib/inject-collector-cache-config-extension.js",
     "./latest-version-extension": "./lib/latest-version-extension.js",
     "./partial-build-extension": "./lib/partial-build-extension.js",
     "./publish-docsearch-config-extension": "./lib/publish-docsearch-config-extension.js",
     "./root-component-extension": "./lib/root-component-extension.js",
-    "./tabs-migration-extension": "./lib/tabs-migration-extension.js"
+    "./tabs-migration-extension": "./lib/tabs-migration-extension.js",
+    "./cache-scandir": "./lib/cache-scandir/index.js"
   },
   "imports": {
     "#package": "./package.json"
@@ -43,7 +45,10 @@
     "lib"
   ],
   "dependencies": {
+    "cache-directory": "~2.0",
     "@antora/expand-path-helper": "~2.0",
+    "archiver": "^5.3.1",
+    "decompress": "4.2.1",
     "handlebars": "latest"
   },
   "devDependencies": {

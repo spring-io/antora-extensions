@@ -50,23 +50,29 @@ const heredoc = (literals, ...vals) => {
 
 const startWebServer = (hostname, rootDir) => {
   const contentTypes = {}
-  const httpServer = http.createServer((request, response) => {
-    fsp.readFile(ospath.join(rootDir, request.url)).then(
-      (content) => {
-        const ext = ospath.extname(request.url)
-        response.writeHead(200, { 'Content-Type': contentTypes[ext] || `application/${ext.slice(1)}` })
-        response.end(content)
-      },
-      () => {
-        response.writeHead(404, { 'Content-Type': 'text/html' })
-        response.end('<!DOCTYPE html><html><body>Not Found</body></html>', 'utf8')
-      }
-    )
-  })
+  const handler = {
+    delegate: (request, response) => {
+      fsp.readFile(ospath.join(rootDir, request.url)).then(
+        (content) => {
+          const ext = ospath.extname(request.url)
+          response.writeHead(200, { 'Content-Type': contentTypes[ext] || `application/${ext.slice(1)}` })
+          response.end(content)
+        },
+        () => {
+          response.writeHead(404, { 'Content-Type': 'text/html' })
+          response.end('<!DOCTYPE html><html><body>Not Found</body></html>', 'utf8')
+        }
+      )
+    },
+  }
+  const httpServer = http.createServer((request, response) => handler.delegate(request, response))
   return once(httpServer.listen(0), 'listening').then(() => {
     httpServer.shutdown = function () {
       return once(this.close() || this, 'close')
     }.bind(httpServer)
+    httpServer.handler = function (h) {
+      handler.delegate = h
+    }
     return [httpServer, new URL(`http://${hostname}:${httpServer.address().port}`).toString().slice(0, -1)]
   })
 }

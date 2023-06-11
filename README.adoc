@@ -46,6 +46,23 @@ This section documents the Antora extensions that are provided by this library a
 
 === Latest Version
 
+*require name:* @springio/antora-extensions/inject-collector-cache-config-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This extension caches the scan directory from the collector extension.
+If no cache exists locally, it will attempt to download the cache from `site.url` found in the playbook or `base_cache_url` configured for the extension.
+If no cache can be downloaded, then it will zip up the scan directory and place it in `build/antora/inject-collector-cache-config-extension/.cache`
+
+
+The extension accepts the following configuration options:
+
+base_cache_url (optional)::
+The base url for looking up cache entries.
+The default is the `site.url + '.cache'`
+
+=== Latest Version
+
 *require name:* @springio/antora-extensions/latest-version-extension
 
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
