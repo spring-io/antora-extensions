@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, trapAsyncError } = require('./harness')
+const { expect } = require('./harness')
 const { name: packageName } = require('#package')
 const fs = require('fs')
 const os = require('os')
@@ -31,14 +31,14 @@ describe('cache-scandir-command', () => {
       const cacheDir = ospath.join(workSpaceDir, 'cache')
       const zipFile = ospath.join(workSpaceDir, 'zip.zip')
       const zipOutputDir = ospath.join(workSpaceDir, 'zip-output')
-      process.argv = [, , scanDir, cacheDir, zipFile]
+      process.argv = ['', '', scanDir, cacheDir, zipFile]
       require(packageName + '/cache-scandir')
-      expect(fs.existsSync(zipFile)).to.be.true
-      expect(fs.existsSync(ospath.join(cacheDir, 'antora.yml'))).to.be.true
-      expect(fs.existsSync(ospath.join(cacheDir, 'modules/ROOT/pages/generated.adoc'))).to.be.true
+      expect(fs.existsSync(zipFile)).to.eql(true)
+      expect(fs.existsSync(ospath.join(cacheDir, 'antora.yml'))).to.eql(true)
+      expect(fs.existsSync(ospath.join(cacheDir, 'modules/ROOT/pages/generated.adoc'))).to.eql(true)
       decompress(zipFile, zipOutputDir)
-      expect(fs.existsSync(ospath.join(zipOutputDir, 'antora.yml'))).to.be.true
-      expect(fs.existsSync(ospath.join(zipOutputDir, 'modules/ROOT/pages/generated.adoc'))).to.be.true
+      expect(fs.existsSync(ospath.join(zipOutputDir, 'antora.yml'))).to.eql(true)
+      expect(fs.existsSync(ospath.join(zipOutputDir, 'modules/ROOT/pages/generated.adoc'))).to.eql(true)
     })
   })
 })

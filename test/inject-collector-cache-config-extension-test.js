@@ -69,11 +69,6 @@ describe('inject-collector-cache-config-extension', () => {
     },
   })
 
-  const runContentAggregate = async (config = {}) => {
-    ext.register.call(generatorContext, { config })
-    return generatorContext.contentAggregated({ contentAggregate })
-  }
-
   const tempDir = function (prefix) {
     return fs.mkdtempSync(ospath.join(os.tmpdir(), prefix))
   }
