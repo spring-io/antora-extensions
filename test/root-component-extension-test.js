@@ -77,8 +77,8 @@ describe('root-component-extension', () => {
     it('when out and pub', () => {
       contentCatalog.files.push({
         out: {
-          dirname: 'framework',
-          path: 'framework/attributes.html',
+          dirname: '/framework',
+          path: '/framework/attributes.html',
           rootPath: '..',
         },
         pub: {
@@ -91,7 +91,35 @@ describe('root-component-extension', () => {
         {
           out: {
             dirname: '',
-            path: 'attributes.html',
+            path: '/attributes.html',
+            rootPath: '.',
+          },
+          pub: {
+            rootPath: '.',
+            url: '/appendix.html',
+          },
+        },
+      ])
+    })
+
+    it('when out and pub no rootComponentName', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '',
+          path: '/attributes.html',
+          rootPath: '.',
+        },
+        pub: {
+          url: '/appendix.html',
+          rootPath: '.',
+        },
+      })
+      run()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '',
+            path: '/attributes.html',
             rootPath: '.',
           },
           pub: {
@@ -105,8 +133,8 @@ describe('root-component-extension', () => {
     it('when nested directories', () => {
       contentCatalog.files.push({
         out: {
-          dirname: 'framework/core',
-          path: 'framework/core/aop.html',
+          dirname: '/framework/core',
+          path: '/framework/core/aop.html',
           rootPath: '../..',
         },
         pub: {
@@ -119,7 +147,7 @@ describe('root-component-extension', () => {
         {
           out: {
             dirname: '/core',
-            path: 'core/aop.html',
+            path: '/core/aop.html',
             rootPath: '..',
           },
           pub: {
@@ -133,8 +161,8 @@ describe('root-component-extension', () => {
     it('when nested 3 directories', () => {
       contentCatalog.files.push({
         out: {
-          dirname: 'framework/core/aop',
-          path: 'framework/core/aop/ataspectj.html',
+          dirname: '/framework/core/aop',
+          path: '/framework/core/aop/ataspectj.html',
           rootPath: '../../..',
         },
         pub: {
@@ -147,7 +175,7 @@ describe('root-component-extension', () => {
         {
           out: {
             dirname: '/core/aop',
-            path: 'core/aop/ataspectj.html',
+            path: '/core/aop/ataspectj.html',
             rootPath: '../..',
           },
           pub: {
