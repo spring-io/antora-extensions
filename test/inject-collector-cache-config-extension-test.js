@@ -193,6 +193,7 @@ describe('inject-collector-cache-config-extension', () => {
       expect(actual).to.eql(expected)
       expect(generatorContext.messages).to.eql([
         `Unable to restore cache from ${httpServerUrl}/.cache/2c4fb2f-1.0.0.zip`,
+        `Configuring collector to cache '${scan}' at '${cache}' and zip the results at '${zipFileName}'`,
       ])
     })
     it('cache downloaded', async () => {
@@ -256,10 +257,19 @@ describe('inject-collector-cache-config-extension', () => {
     })
     it('configured cache url', async () => {
       const url = playbook.site.url
+      const scan = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources')
+      const cache = ospath.join(cacheDir, 'collector-cache/spring-security/6ca8fb4-1.0.0')
+      const zipFileName = ospath.join(
+        playbookDir,
+        'build/antora/inject-collector-cache-config-extension/.cache/6ca8fb4-1.0.0.zip'
+      )
       delete playbook.site.url
       ext.register.call(generatorContext, { playbook, config: { baseCacheUrl: url } })
       await generatorContext.contentAggregated({ playbook, contentAggregate })
-      expect(generatorContext.messages).to.eql([`Unable to restore cache from ${httpServerUrl}/6ca8fb4-1.0.0.zip`])
+      expect(generatorContext.messages).to.eql([
+        `Unable to restore cache from ${httpServerUrl}/6ca8fb4-1.0.0.zip`,
+        `Configuring collector to cache '${scan}' at '${cache}' and zip the results at '${zipFileName}'`,
+      ])
     })
   })
 })
