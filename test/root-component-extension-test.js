@@ -130,6 +130,62 @@ describe('root-component-extension', () => {
       ])
     })
 
+    it('when out and pub rootComponentName/', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '',
+          path: 'framework/attributes.html',
+          rootPath: '..',
+        },
+        pub: {
+          url: 'framework/appendix.html',
+          rootPath: '..',
+        },
+      })
+      run()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '',
+            path: 'attributes.html',
+            rootPath: '.',
+          },
+          pub: {
+            rootPath: '.',
+            url: 'appendix.html',
+          },
+        },
+      ])
+    })
+
+    it('when out and pub /rootComponentName + NO', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '',
+          path: 'frameworkNO/attributes.html',
+          rootPath: '..',
+        },
+        pub: {
+          url: 'frameworkNO/appendix.html',
+          rootPath: '..',
+        },
+      })
+      run()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '',
+            path: 'frameworkNO/attributes.html',
+            rootPath: '..',
+          },
+          pub: {
+            rootPath: '..',
+            url: 'frameworkNO/appendix.html',
+          },
+        },
+      ])
+    })
+
     it('when nested directories', () => {
       contentCatalog.files.push({
         out: {
