@@ -230,13 +230,37 @@ describe('partial-build-extension', () => {
         ).to.throw('connect ECONNREFUSED')
       })
 
-      it('should look up version in git repository if not specified', async () => {
+      it('should look up gradle version in git repository if not specified', async () => {
         await runScenario({
           refname: '6.0.0',
           rawgitUrl: httpServerUrl,
           expectedRefs: { branches: [], tags: ['6.0.0'] },
           initWorktree: true,
         })
+      })
+
+      it('should look up maven version in git repository if not specified', async () => {
+        await runScenario({
+          refname: '3.2.0',
+          rawgitUrl: httpServerUrl,
+          expectedRefs: { branches: [], tags: ['3.2.0'] },
+          initWorktree: true,
+        })
+      })
+
+      it('should fail with good error if not specified and cannot find', async () => {
+        expect(
+          await trapAsyncError(() =>
+            runScenario({
+              refname: '99.0.0',
+              rawgitUrl: httpServerUrl,
+              expectedRefs: { branches: [], tags: ['3.2.0'] },
+              initWorktree: true,
+            })
+          )
+        ).to.throw(
+          `Could not obtain the version from a pom.xml (Error: HTTPError: ${httpServerUrl}/org/repo/99.0.0/pom.xml returned response code 404 (Not Found)) or gradle.properties (Error: HTTPError: ${httpServerUrl}/org/repo/99.0.0/gradle.properties returned response code 404 (Not Found))`
+        )
       })
 
       it('should extract repository path from non-https repository URL with .git file extension', async () => {
@@ -278,7 +302,10 @@ describe('partial-build-extension', () => {
           return simpleGet
         }
         await runScenario({ refname: '6.0.0', expectedRefs: { branches: [], tags: ['6.0.0'] }, initWorktree: true })
-        expect(simpleGet.requests).to.eql(['https://raw.githubusercontent.com/org/repo/6.0.0/gradle.properties'])
+        expect(simpleGet.requests).to.eql([
+          'https://raw.githubusercontent.com/org/repo/6.0.0/pom.xml',
+          'https://raw.githubusercontent.com/org/repo/6.0.0/gradle.properties',
+        ])
       })
     })
   })

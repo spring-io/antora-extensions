@@ -49,6 +49,7 @@
     "@antora/expand-path-helper": "~2.0",
     "archiver": "^5.3.1",
     "decompress": "4.2.1",
+    "fast-xml-parser": "latest",
     "handlebars": "latest"
   },
   "devDependencies": {

@@ -28,6 +28,16 @@
               "title": "Start Page"
             }
           ]
+        },
+        "3.2.0": {
+          "url": "/index.html",
+          "pages": [
+            {
+              "path": "index.adoc",
+              "url": "/index.html",
+              "title": "Start Page"
+            }
+          ]
         }
       }
     }

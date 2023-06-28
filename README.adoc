@@ -105,7 +105,7 @@ version::
 The documentation version that corresponds to the refname.
 This information is used to determine if the version provided by the refname is present in the site manifest.
 May be provided by the `BUILD_VERSION` environment variable.
-If not specified, the version will be retrieved from the [.path]_gradle.properties_ file at the root of the repository at the specified refname.
+If not specified, the version will be retrieved from the [.path]_gradle.properties_ or [.path]_pom.xml_ file at the root of the repository at the specified refname.
 Ideally, this option should be set by the workflow that invokes the partial build.
 
 rawgit_url (default: {esc-https}://raw.githubusercontent.com)::
