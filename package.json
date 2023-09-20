@@ -36,7 +36,9 @@
     "./publish-docsearch-config-extension": "./lib/publish-docsearch-config-extension.js",
     "./root-component-extension": "./lib/root-component-extension.js",
     "./tabs-migration-extension": "./lib/tabs-migration-extension.js",
-    "./cache-scandir": "./lib/cache-scandir/index.js"
+    "./static-page-extension": "./lib/static-page-extension.js",
+    "./cache-scandir": "./lib/cache-scandir/index.js",
+    "./static-pages/search": "./lib/static/search.adoc"
   },
   "imports": {
     "#package": "./package.json"
