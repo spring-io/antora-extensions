@@ -4,6 +4,7 @@
 const { expect } = require('./harness')
 const { name: packageName } = require('#package')
 const resolvedSearch = require.resolve('@springio/antora-extensions/static-pages/search')
+const resolvedSpringProjects = require.resolve('@springio/antora-extensions/static-pages/spring-projects')
 describe('static-page-extension', () => {
   const ext = require(packageName + '/static-page-extension')
   const createGeneratorContext = () => ({
@@ -53,12 +54,13 @@ describe('static-page-extension', () => {
   })
 
   describe('contentAggregate', () => {
-    it('adds file', async () => {
+    it('adds files', async () => {
       ext.register.call(generatorContext, {})
       await generatorContext.contentAggregated({ contentAggregate })
-      const search = contentAggregate[0].files[0]
-      // convert contents to a String so it can be compared
-      search.contents = search.contents.toString()
+      for (const f of contentAggregate[0].files) {
+        // convert contents to a String so it can be compared
+        f.contents = f.contents.toString()
+      }
       expect(contentAggregate).to.eql([
         {
           files: [
@@ -71,6 +73,17 @@ describe('static-page-extension', () => {
                 extname: '.adoc',
                 path: 'modules/ROOT/pages/search.adoc',
                 stem: 'search',
+              },
+            },
+            {
+              contents: '= Spring Projects\n:page-article: spring-projects\n\nList all Spring Projects',
+              path: 'modules/ROOT/pages/spring-projects.adoc',
+              src: {
+                abspath: resolvedSpringProjects,
+                basename: 'spring-projects.adoc',
+                extname: '.adoc',
+                path: 'modules/ROOT/pages/spring-projects.adoc',
+                stem: 'spring-projects',
               },
             },
           ],

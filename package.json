@@ -38,7 +38,8 @@
     "./tabs-migration-extension": "./lib/tabs-migration-extension.js",
     "./static-page-extension": "./lib/static-page-extension.js",
     "./cache-scandir": "./lib/cache-scandir/index.js",
-    "./static-pages/search": "./lib/static/search.adoc"
+    "./static-pages/search": "./lib/static/search.adoc",
+    "./static-pages/spring-projects": "./lib/static/spring-projects.adoc"
   },
   "imports": {
     "#package": "./package.json"
