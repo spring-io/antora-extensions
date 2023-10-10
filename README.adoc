@@ -279,6 +279,14 @@ A boolean option that controls whether sequential empty lines are collapsed into
 Regardless of the value of this option, the extension will relocate block metadata lines to be directly above the block.
 The extension will also insert an empty line between tabs if one does not exist.
 
+=== Static Page
+
+*require name:* @springio/antora-extensions/static-page-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This extension adds shared pages that are picked up by the antora-ui-spring project.
+
 ifndef::env-npm[]
 == Development Quickstart
 
