@@ -287,6 +287,68 @@ IMPORTANT: Be sure to register this extension under the `antora.extensions` key 
 
 This extension adds shared pages that are picked up by the antora-ui-spring project.
 
+=== Asciinema
+
+*require name:* @springio/antora-extensions/asciinema-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+NOTE: Using this extension will need a little help from an
+UI bundle as it is expected that named partials `asciinema-load-scripts`,
+`asciinema-create-scripts` and `asciinema-styles` are included in a same
+locations where javascript and styles are loaded. Extension will add these
+partials if those don't already exist in an UI bundle.
+
+The purpose of this extension is to convert asciidoc block type _asciinema_ into an asciinema-player. Expected content is plain
+cast file which is automatically extracted and packaged with
+into antora assets and configured with player instances.
+
+[source,text]
+----
+[asciinema]
+....
+{"version": 2, "width": 80, "height": 24}
+[1.0, "o", "hello "]
+[2.0, "o", "world!"]
+....
+----
+
+TIP: You don't need to inline cast file as it can also come
+via asciidoc include macro.
+
+The extension accepts several configuration options as defined in
+https://github.com/asciinema/asciinema-player#options.
+
+rows::
+Optional attribute as a default value for asciinema option `rows`.
+
+cols::
+Optional attribute as a default value for asciinema option `cols`.
+
+auto_play::
+Optional attribute as a default value for asciinema option `autoPlay`.
+
+The block type accepts several configuration options. Block type options will override
+options from an extension level. Not a difference between snake_case and camelCase.
+For example:
+
+[source,text]
+----
+[asciinema,rows=10,autoPlay=true]
+....
+<cast file>
+....
+----
+
+rows::
+Optional attribute as a default value for asciinema option `rows`.
+
+cols::
+Optional attribute as a default value for asciinema option `cols`.
+
+autoPlay::
+Optional attribute as a default value for asciinema option `autoPlay`.
+
 ifndef::env-npm[]
 == Development Quickstart
 
