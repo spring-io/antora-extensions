@@ -39,7 +39,8 @@
     "./static-page-extension": "./lib/static-page-extension.js",
     "./cache-scandir": "./lib/cache-scandir/index.js",
     "./static-pages/search": "./lib/static/search.adoc",
-    "./static-pages/spring-projects": "./lib/static/spring-projects.adoc"
+    "./static-pages/spring-projects": "./lib/static/spring-projects.adoc",
+    "./asciinema-extension": "./lib/asciinema-extension.js"
   },
   "imports": {
     "#package": "./package.json"
@@ -53,10 +54,12 @@
     "archiver": "^5.3.1",
     "decompress": "4.2.1",
     "fast-xml-parser": "latest",
-    "handlebars": "latest"
+    "handlebars": "latest",
+    "asciinema-player": "^3.6.1"
   },
   "devDependencies": {
     "@asciidoctor/tabs": "latest",
+    "@asciidoctor/core": "latest",
     "chai": "~4.3",
     "chai-fs": "~2.0",
     "chai-spies": "~1.0",

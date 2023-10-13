@@ -18,5 +18,8 @@
     "prefer-regex-literals": "off",
     "spaced-comment": "off",
     "radix": ["error", "always"]
+  },
+  "globals": {
+    "Opal": true
   }
 }
