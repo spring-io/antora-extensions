@@ -44,8 +44,7 @@ endif::[]
 
 This section documents the Antora extensions that are provided by this library and how to configure them.
 
-=== Latest Version
-
+=== Collector Cache Config
 *require name:* @springio/antora-extensions/inject-collector-cache-config-extension
 
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
