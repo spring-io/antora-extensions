@@ -66,7 +66,7 @@ The default is the `site.url + '.cache'`
 
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
 
-This extension can ensure that old tags are no longer built.
+This extension can ensure that old tags are no longer built to prevent the builds from becoming too large and so that very old tags do not need to build (which might eventually become unstable).
 The extension ensures all branches continue to build.
 It will remove all old patch releases by preserving the largest `patch` for each `major.minor` segment of a tag in the format of `${major}.${minor}.${patch}` or `v${major}.${minor}.${patch}`.
 
