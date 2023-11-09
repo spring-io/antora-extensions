@@ -30,10 +30,13 @@ describe('asciinema-extension', () => {
   const createUiCatalog = () => ({
     files: [],
     addFile (f) {
+      if (this.files.some(({ path }) => path === f.path)) {
+        throw new Error('duplicate file')
+      }
       this.files.push(f)
     },
-    findByType (f) {
-      return []
+    findByType (t) {
+      return this.files.filter(({ type }) => type === t)
     },
   })
 
@@ -118,6 +121,33 @@ describe('asciinema-extension', () => {
   describe('contentClassified', () => {
     it('should migrate asciinema block', async () => {
       const input = heredoc`
+      [asciinema]
+      ----
+      foobar
+      ----
+      `
+      addPage(input)
+
+      ext.register.call(generatorContext, { config: {} })
+      generatorContext.updateVariables({ contentCatalog, siteAsciiDocConfig, uiCatalog })
+      await generatorContext.contentClassified(generatorContext.variables)
+
+      const registry = asciidoctor.Extensions.create()
+      siteAsciiDocConfig.extensions[0].register.call({}, registry, { file: { asciidoc: { attributes: {} } } })
+      const out = asciidoctor.convert(input, { extension_registry: registry })
+
+      expect(siteAsciiDocConfig.extensions.length).to.equal(1)
+      expect(uiCatalog.files.length).to.equal(1)
+      expect(out).to.contains('video')
+    })
+
+    it('should work with duplicate blocks', async () => {
+      const input = heredoc`
+      [asciinema]
+      ----
+      foobar
+      ----
+
       [asciinema]
       ----
       foobar
