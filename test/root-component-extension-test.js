@@ -28,9 +28,14 @@ describe('root-component-extension', () => {
     },
   })
 
-  const run = (config = { rootComponentName: 'framework' }) => {
+  const contentClassified = (config = { rootComponentName: 'framework' }) => {
     ext.register.call(generatorContext, config ? { config } : {})
     return generatorContext.contentClassified({ contentCatalog })
+  }
+
+  const documentsConverted = (config = { rootComponentName: 'framework' }) => {
+    ext.register.call(generatorContext, config ? { config } : {})
+    return generatorContext.documentsConverted({ contentCatalog })
   }
 
   let generatorContext
@@ -55,7 +60,7 @@ describe('root-component-extension', () => {
 
   describe('contentClassified', () => {
     it('root component name is required', () => {
-      expect(() => run({})).to.throw(
+      expect(() => contentClassified({})).to.throw(
         'Missing required configuration attribute root_component_name for root-component-extension'
       )
     })
@@ -65,7 +70,7 @@ describe('root-component-extension', () => {
           url: '/framework/',
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           pub: {
@@ -86,7 +91,7 @@ describe('root-component-extension', () => {
           rootPath: '..',
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           out: {
@@ -114,7 +119,7 @@ describe('root-component-extension', () => {
           rootPath: '.',
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           out: {
@@ -142,7 +147,7 @@ describe('root-component-extension', () => {
           rootPath: '..',
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           out: {
@@ -170,7 +175,7 @@ describe('root-component-extension', () => {
           rootPath: '..',
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           out: {
@@ -198,7 +203,7 @@ describe('root-component-extension', () => {
           rootPath: '..',
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           out: {
@@ -226,7 +231,7 @@ describe('root-component-extension', () => {
           rootPath: '../../..',
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           out: {
@@ -243,12 +248,12 @@ describe('root-component-extension', () => {
     })
     it('when no out, pub, rel', () => {
       contentCatalog.files.push({})
-      run()
+      contentClassified()
       // no errors
     })
     it('rel and no rel.pub', () => {
       contentCatalog.files.push({ rel: {} })
-      run()
+      contentClassified()
       // no errors
     })
     it('when rel', () => {
@@ -264,7 +269,7 @@ describe('root-component-extension', () => {
           },
         },
       })
-      run()
+      contentClassified()
       expect(contentCatalog.files).is.eqls([
         {
           pub: {
@@ -283,14 +288,243 @@ describe('root-component-extension', () => {
 
     it('versions updated on root component when no version segment', () => {
       contentCatalog.component.versions.push({ url: '/framework/index.html' })
-      run()
+      contentClassified()
       expect(contentCatalog.component.versions).is.eqls([{ url: '/index.html' }])
     })
 
     it('versions updated on root component when version segment', () => {
       contentCatalog.component.versions.push({ url: '/framework/6.0/index.html' })
-      run()
+      contentClassified()
       expect(contentCatalog.component.versions).is.eqls([{ url: '/6.0/index.html' }])
+    })
+  })
+
+  describe('documentsConverted', () => {
+    it('root component name is required', () => {
+      expect(() => documentsConverted({})).to.throw(
+        'Missing required configuration attribute root_component_name for root-component-extension'
+      )
+    })
+    it('pub.url when no out', () => {
+      contentCatalog.files.push({
+        pub: {
+          url: '/framework/',
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          pub: {
+            url: '/',
+          },
+        },
+      ])
+    })
+    it('when out and pub', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '/framework',
+          path: '/framework/attributes.html',
+          rootPath: '..',
+        },
+        pub: {
+          url: '/framework/appendix.html',
+          rootPath: '..',
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '',
+            path: '/attributes.html',
+            rootPath: '.',
+          },
+          pub: {
+            rootPath: '.',
+            url: '/appendix.html',
+          },
+        },
+      ])
+    })
+
+    it('when out and pub no rootComponentName', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '',
+          path: '/attributes.html',
+          rootPath: '.',
+        },
+        pub: {
+          url: '/appendix.html',
+          rootPath: '.',
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '',
+            path: '/attributes.html',
+            rootPath: '.',
+          },
+          pub: {
+            rootPath: '.',
+            url: '/appendix.html',
+          },
+        },
+      ])
+    })
+
+    it('when out and pub rootComponentName/', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '',
+          path: 'framework/attributes.html',
+          rootPath: '..',
+        },
+        pub: {
+          url: 'framework/appendix.html',
+          rootPath: '..',
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '',
+            path: 'attributes.html',
+            rootPath: '.',
+          },
+          pub: {
+            rootPath: '.',
+            url: 'appendix.html',
+          },
+        },
+      ])
+    })
+
+    it('when out and pub /rootComponentName + NO', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '',
+          path: 'frameworkNO/attributes.html',
+          rootPath: '..',
+        },
+        pub: {
+          url: 'frameworkNO/appendix.html',
+          rootPath: '..',
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '',
+            path: 'frameworkNO/attributes.html',
+            rootPath: '..',
+          },
+          pub: {
+            rootPath: '..',
+            url: 'frameworkNO/appendix.html',
+          },
+        },
+      ])
+    })
+
+    it('when nested directories', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '/framework/core',
+          path: '/framework/core/aop.html',
+          rootPath: '../..',
+        },
+        pub: {
+          url: '/framework/core/aot.html',
+          rootPath: '..',
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '/core',
+            path: '/core/aop.html',
+            rootPath: '..',
+          },
+          pub: {
+            rootPath: '.',
+            url: '/core/aot.html',
+          },
+        },
+      ])
+    })
+
+    it('when nested 3 directories', () => {
+      contentCatalog.files.push({
+        out: {
+          dirname: '/framework/core/aop',
+          path: '/framework/core/aop/ataspectj.html',
+          rootPath: '../../..',
+        },
+        pub: {
+          url: '/framework/core/aop/ataspectj.html',
+          rootPath: '../../..',
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          out: {
+            dirname: '/core/aop',
+            path: '/core/aop/ataspectj.html',
+            rootPath: '../..',
+          },
+          pub: {
+            rootPath: '../..',
+            url: '/core/aop/ataspectj.html',
+          },
+        },
+      ])
+    })
+    it('when no out, pub, rel', () => {
+      contentCatalog.files.push({})
+      documentsConverted()
+      // no errors
+    })
+    it('rel and no rel.pub', () => {
+      contentCatalog.files.push({ rel: {} })
+      documentsConverted()
+      // no errors
+    })
+    it('when rel', () => {
+      contentCatalog.files.push({
+        pub: {
+          url: '/framework/6.0',
+          rootPath: '../..',
+        },
+        rel: {
+          pub: {
+            url: '/framework',
+            rootPath: '..',
+          },
+        },
+      })
+      documentsConverted()
+      expect(contentCatalog.files).is.eqls([
+        {
+          pub: {
+            url: '/6.0',
+            rootPath: '..',
+          },
+          rel: {
+            pub: {
+              url: '/',
+              rootPath: '.',
+            },
+          },
+        },
+      ])
     })
   })
 })
