@@ -122,6 +122,8 @@ Once the partial build is complete, the assumption is that the files generated w
 If a request is made to build a version which has not already been published, or the prerelease status of that version has changed since the last full build, the extension will revert to a full build.
 It will also generate a [.path]_.full-build_ file in the output directory as a hint to the sync script that a full build has occurred.
 
+If the refname is `HEAD`, then the content source url is also updated to the https://docs.antora.org/antora/latest/playbook/content-source-url/#local-urls[local content repository] and the version must be specified.
+
 You can give this extension a try by running these commands:
 
  $ git clone --depth=1 -b docs-build https://github.com/spring-projects/spring-security spring-security-docs-build

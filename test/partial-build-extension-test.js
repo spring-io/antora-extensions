@@ -111,11 +111,12 @@ describe('partial-build-extension', () => {
       expectedRefs,
       expectedOutput,
       initWorktree,
+      playbookDir = WORK_DIR,
     }) => {
       const expected = [Object.assign({}, playbook.content.sources[0], expectedRefs)]
       attributes ??= { 'primary-site-manifest-url': ospath.join(FIXTURES_DIR, 'site-manifest.json') }
       if (siteUrl) playbook.site.url = siteUrl
-      playbook.dir = WORK_DIR
+      playbook.dir = playbookDir
       if (initWorktree) {
         if (initWorktree === 'linked') {
           playbook.dir = ospath.join(WORK_DIR, 'docs-build')
@@ -141,7 +142,7 @@ describe('partial-build-extension', () => {
       expect(playbook.content.sources).to.eql(expected)
       if (expectedRefs) {
         expect(playbook.asciidoc.attributes['primary-site-url']).to.equal('.')
-        expect(playbook.dir).to.be.a.directory().and.empty()
+        expect(playbook.dir).to.be.a.directory()
       } else {
         expect(playbook.asciidoc.attributes).to.not.have.property('primary-site-url')
         expect(ospath.join(playbook.dir, '.full-build')).to.be.a.path()
@@ -155,6 +156,35 @@ describe('partial-build-extension', () => {
 
     it('should rewrite content sources if refname is tag and version exists in site manifest', async () => {
       await runScenario({ refname: '6.0.0', version: '6.0.0', expectedRefs: { branches: [], tags: ['6.0.0'] } })
+    })
+
+    it('should rewrite content sources if refname is HEAD and version exists in site manifest', async () => {
+      const playBookDir = WORK_DIR
+      await fsp.mkdir(ospath.join(WORK_DIR, '.git'), { recursive: true })
+      await runScenario({
+        refname: 'HEAD',
+        version: '6.1.0-SNAPSHOT',
+        expectedRefs: { branches: ['HEAD'], tags: [], url: '.' },
+        playbookDir: playBookDir,
+      })
+    })
+
+    it('should rewrite content sources if refname is HEAD and playbook in child dir', async () => {
+      const playBookDir = ospath.join(WORK_DIR, 'docs')
+      await fsp.mkdir(playBookDir, { recursive: true })
+      await fsp.mkdir(ospath.join(WORK_DIR, '.git'), { recursive: true })
+      await runScenario({
+        refname: 'HEAD',
+        version: '6.1.0-SNAPSHOT',
+        expectedRefs: { branches: ['HEAD'], tags: [], url: './..' },
+        playbookDir: playBookDir,
+      })
+    })
+
+    it('should error if refname is HEAD and version undefined', async () => {
+      expect(await trapAsyncError(() => runScenario({ refname: 'HEAD' }))).to.throw(
+        'When using author mode version is required. Specify config.version or env BUILD_VERSION'
+      )
     })
 
     it('should use refname and version defined by BUILD_REFNAME and BUILD_VERSION environment variables', async () => {
