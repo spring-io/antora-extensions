@@ -44,6 +44,39 @@ endif::[]
 
 This section documents the Antora extensions that are provided by this library and how to configure them.
 
+=== antora-extensions
+
+*require name:* @springio/antora-extensions
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This extension applies the recommended Antora Extensions.
+It applies the following extensions in the proper order:
+
+* <<_partial_build>>
+* https://gitlab.com/antora/antora-atlas-extension[@antora/atlas-extension]
+* <<_latest_version>>
+* <<_collector_cache_config>>
+* https://gitlab.com/antora/antora-collector-extension[@antora/collector-extension]
+* <<_root_component>>
+* <<_static_page>>
+
+
+The extension accepts the following configuration options:
+
+root_component_name::
+The property for <<_root_component>> extension.
+
+Example:
+
+[source,yml]
+----
+antora:
+  extensions:
+    - require: '@springio/antora-extensions'
+      root_component_name: 'security'
+----
+
 === Collector Cache Config
 *require name:* @springio/antora-extensions/inject-collector-cache-config-extension
 

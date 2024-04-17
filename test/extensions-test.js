@@ -8,8 +8,15 @@ describe('extensions', () => {
   const ext = require(packageName)
 
   const createGeneratorContext = () => ({
+    required: [],
     once (eventName, fn) {
       this[eventName] = fn
+    },
+    require (request) {
+      this.required.push(request)
+      return {
+        register: function (args) {},
+      }
     },
   })
 
@@ -27,7 +34,15 @@ describe('extensions', () => {
 
     it('should be able to call register function exported by extension', () => {
       ext.register.call(generatorContext, {})
-      expect(Object.keys(generatorContext)).to.eql(['once'])
+      expect(generatorContext.required).eql([
+        `${packageName}/partial-build-extension`,
+        '@antora/atlas-extension',
+        `${packageName}/latest-version-extension`,
+        `${packageName}/inject-collector-cache-config-extension`,
+        '@antora/collector-extension',
+        `${packageName}/root-component-extension`,
+        `${packageName}/static-page-extension`,
+      ])
     })
   })
 })
