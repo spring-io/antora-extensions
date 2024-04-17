@@ -53,6 +53,7 @@ IMPORTANT: Be sure to register this extension under the `antora.extensions` key 
 This extension applies the recommended Antora Extensions.
 It applies the following extensions in the proper order:
 
+* <<Set Algolia Env>>
 * <<Partial Build>>
 * https://gitlab.com/antora/antora-atlas-extension[@antora/atlas-extension]
 * <<Latest Version>>
@@ -76,6 +77,14 @@ antora:
     - require: '@springio/antora-extensions'
       root_component_name: 'security'
 ----
+
+=== Set Algolia Env
+
+*require name:* @springio/antora-extensions/set-algolia-env-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This extension sets the Algolia environment variables to enable search.
 
 === Collector Cache Config
 *require name:* @springio/antora-extensions/inject-collector-cache-config-extension
