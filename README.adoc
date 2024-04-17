@@ -55,17 +55,17 @@ It applies the following extensions in the proper order:
 
 * <<Partial Build>>
 * https://gitlab.com/antora/antora-atlas-extension[@antora/atlas-extension]
-* <<_latest_version>>
-* <<_collector_cache_config>>
+* <<Latest Version>>
+* <<Collector Cache Config>>
 * https://gitlab.com/antora/antora-collector-extension[@antora/collector-extension]
-* <<_root_component>>
-* <<_static_page>>
+* <<Root Component>>
+* <<Static Page>>
 
 
 The extension accepts the following configuration options:
 
 root_component_name::
-The property for <<_root_component>> extension.
+The property for <<Root Component>> extension.
 
 Example:
 
