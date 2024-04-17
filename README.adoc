@@ -44,8 +44,40 @@ endif::[]
 
 This section documents the Antora extensions that are provided by this library and how to configure them.
 
-=== Latest Version
+=== antora-extensions
 
+*require name:* @springio/antora-extensions
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This extension applies the recommended Antora Extensions.
+It applies the following extensions in the proper order:
+
+* <<Partial Build>>
+* https://gitlab.com/antora/antora-atlas-extension[@antora/atlas-extension]
+* <<Latest Version>>
+* <<Collector Cache Config>>
+* https://gitlab.com/antora/antora-collector-extension[@antora/collector-extension]
+* <<Root Component>>
+* <<Static Page>>
+
+
+The extension accepts the following configuration options:
+
+root_component_name::
+The property for <<Root Component>> extension.
+
+Example:
+
+[source,yml]
+----
+antora:
+  extensions:
+    - require: '@springio/antora-extensions'
+      root_component_name: 'security'
+----
+
+=== Collector Cache Config
 *require name:* @springio/antora-extensions/inject-collector-cache-config-extension
 
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
@@ -67,7 +99,7 @@ The default is the `site.url + '.cache'`
 
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
 
-This extension can ensure that old tags are no longer built.
+This extension can ensure that old tags are no longer built to prevent the builds from becoming too large and so that very old tags do not need to build (which might eventually become unstable).
 The extension ensures all branches continue to build.
 It will remove all old patch releases by preserving the largest `patch` for each `major.minor` segment of a tag in the format of `${major}.${minor}.${patch}` or `v${major}.${minor}.${patch}`.
 
@@ -89,6 +121,8 @@ Once the partial build is complete, the assumption is that the files generated w
 
 If a request is made to build a version which has not already been published, or the prerelease status of that version has changed since the last full build, the extension will revert to a full build.
 It will also generate a [.path]_.full-build_ file in the output directory as a hint to the sync script that a full build has occurred.
+
+If the refname is `HEAD`, then the content source url is also updated to the https://docs.antora.org/antora/latest/playbook/content-source-url/#local-urls[local content repository] and the version must be specified.
 
 You can give this extension a try by running these commands:
 
@@ -278,6 +312,76 @@ normalize (default: false)::
 A boolean option that controls whether sequential empty lines are collapsed into a single empty line.
 Regardless of the value of this option, the extension will relocate block metadata lines to be directly above the block.
 The extension will also insert an empty line between tabs if one does not exist.
+
+=== Static Page
+
+*require name:* @springio/antora-extensions/static-page-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This extension adds shared pages that are picked up by the antora-ui-spring project.
+
+=== Asciinema
+
+*require name:* @springio/antora-extensions/asciinema-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+NOTE: Using this extension will need a little help from an
+UI bundle as it is expected that named partials `asciinema-load-scripts`,
+`asciinema-create-scripts` and `asciinema-styles` are included in a same
+locations where javascript and styles are loaded. Extension will add these
+partials if those don't already exist in an UI bundle.
+
+The purpose of this extension is to convert asciidoc block type _asciinema_ into an asciinema-player. Expected content is plain
+cast file which is automatically extracted and packaged with
+into antora assets and configured with player instances.
+
+[source,text]
+----
+[asciinema]
+....
+{"version": 2, "width": 80, "height": 24}
+[1.0, "o", "hello "]
+[2.0, "o", "world!"]
+....
+----
+
+TIP: You don't need to inline cast file as it can also come
+via asciidoc include macro.
+
+The extension accepts several configuration options as defined in
+https://github.com/asciinema/asciinema-player#options.
+
+rows::
+Optional attribute as a default value for asciinema option `rows`.
+
+cols::
+Optional attribute as a default value for asciinema option `cols`.
+
+auto_play::
+Optional attribute as a default value for asciinema option `autoPlay`.
+
+The block type accepts several configuration options. Block type options will override
+options from an extension level. Not a difference between snake_case and camelCase.
+For example:
+
+[source,text]
+----
+[asciinema,rows=10,autoPlay=true]
+....
+<cast file>
+....
+----
+
+rows::
+Optional attribute as a default value for asciinema option `rows`.
+
+cols::
+Optional attribute as a default value for asciinema option `cols`.
+
+autoPlay::
+Optional attribute as a default value for asciinema option `autoPlay`.
 
 ifndef::env-npm[]
 == Development Quickstart

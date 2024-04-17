@@ -113,6 +113,24 @@ describe('latest-version-extension', () => {
       ext.register.call(generatorContext, { config: {} })
       expect(generatorContext.contentAggregated).to.be.instanceOf(Function)
     })
+
+    it('should fail if registered before atlas extension', () => {
+      expect(() =>
+        registerWithExtensions([`${packageName}/latest-version-extension`, '@antora/atlas-extension'])
+      ).to.throw('The latest-version-extension must be registered after the atlas-extension')
+    })
+
+    it('should not fail if registered after atlas extension', () => {
+      registerWithExtensions(['@antora/atlas-extension', `${packageName}/latest-version-extension`])
+    })
+
+    it('should not fail if no atlas-extension', () => {
+      registerWithExtensions([`${packageName}/latest-version-extension`])
+    })
+
+    it('should not fail if no latest-version-extension', () => {
+      registerWithExtensions(['@antora/atlas-extension'])
+    })
   })
 
   describe('filter older versions', () => {
@@ -227,4 +245,8 @@ describe('latest-version-extension', () => {
       ])
     })
   })
+
+  function registerWithExtensions (extensions) {
+    ext.register.call(generatorContext, { playbook: { antora: { extensions } } })
+  }
 })
