@@ -61,7 +61,7 @@ It applies the following extensions in the proper order:
 * https://gitlab.com/antora/antora-collector-extension[@antora/collector-extension]
 * <<Root Component>>
 * <<Static Page>>
-
+* <<Asciinema>>
 
 The extension accepts the following configuration options:
 
@@ -93,8 +93,7 @@ IMPORTANT: Be sure to register this extension under the `antora.extensions` key 
 
 This extension caches the scan directory from the collector extension.
 If no cache exists locally, it will attempt to download the cache from `site.url` found in the playbook or `base_cache_url` configured for the extension.
-If no cache can be downloaded, then it will zip up the scan directory and place it in `build/antora/inject-collector-cache-config-extension/.cache`
-
+If no cache can be downloaded, then it will zip up the scan directory and place it in `build/antora/inject-collector-cache-config-extension/.cache`.
 
 The extension accepts the following configuration options:
 
@@ -135,8 +134,10 @@ If the refname is `HEAD`, then the content source url is also updated to the htt
 
 You can give this extension a try by running these commands:
 
- $ git clone --depth=1 -b docs-build https://github.com/spring-projects/spring-security spring-security-docs-build
-   BUILD_REFNAME=main ./gradlew antora
+[,console]
+----
+$ git clone --depth=1 -b docs-build https://github.com/spring-projects/spring-security spring-security-docs-build BUILD_REFNAME=main ./gradlew antora
+----
 
 The extension accepts several configuration options:
 
@@ -166,7 +167,7 @@ This attribute can be set in the playbook.
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
 
 The purpose of this extension is to generate and publish the docsearch configuration that is used by Algolia.
-It will produce a file similar to the following at `${site.url}/docsearch-config.json`
+It will produce a file similar to the following at `${site.url}/docsearch-config.json`:
 
 [source,json]
 ----
@@ -336,17 +337,12 @@ This extension adds shared pages that are picked up by the antora-ui-spring proj
 
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
 
-NOTE: Using this extension will need a little help from an
-UI bundle as it is expected that named partials `asciinema-load-scripts`,
-`asciinema-create-scripts` and `asciinema-styles` are included in a same
-locations where javascript and styles are loaded. Extension will add these
-partials if those don't already exist in an UI bundle.
+NOTE: Using this extension will need a little help from an UI bundle as it is expected that named partials `asciinema-load-scripts`, `asciinema-create-scripts` and `asciinema-styles` are included in a same locations where javascript and styles are loaded.
+Extension will add these partials if those don't already exist in an UI bundle.
 
-The purpose of this extension is to convert asciidoc block type _asciinema_ into an asciinema-player. Expected content is plain
-cast file which is automatically extracted and packaged with
-into antora assets and configured with player instances.
+The purpose of this extension is to convert asciidoc block type _asciinema_ into an asciinema-player. Expected content is plain cast file which is automatically extracted and packaged with into antora assets and configured with player instances.
 
-[source,text]
+[source,asciidoc]
 ----
 [asciinema]
 ....
@@ -356,11 +352,9 @@ into antora assets and configured with player instances.
 ....
 ----
 
-TIP: You don't need to inline cast file as it can also come
-via asciidoc include macro.
+TIP: You don't need to inline cast file as it can also come via asciidoc include macro.
 
-The extension accepts several configuration options as defined in
-https://github.com/asciinema/asciinema-player#options.
+The extension accepts several configuration options as defined in https://github.com/asciinema/asciinema-player#options.
 
 rows::
 Optional attribute as a default value for asciinema option `rows`.
@@ -371,11 +365,10 @@ Optional attribute as a default value for asciinema option `cols`.
 auto_play::
 Optional attribute as a default value for asciinema option `autoPlay`.
 
-The block type accepts several configuration options. Block type options will override
-options from an extension level. Not a difference between snake_case and camelCase.
+The block type accepts several configuration options. Block type options will override options from an extension level. Not a difference between snake_case and camelCase.
 For example:
 
-[source,text]
+[source,asciidoc]
 ----
 [asciinema,rows=10,autoPlay=true]
 ....
