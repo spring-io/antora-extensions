@@ -41,7 +41,8 @@
     "./set-algolia-env-extension": "./lib/set-algolia-env-extension.js",
     "./static-pages/search": "./lib/static/search.adoc",
     "./static-pages/spring-projects": "./lib/static/spring-projects.adoc",
-    "./asciinema-extension": "./lib/asciinema-extension.js"
+    "./asciinema-extension": "./lib/asciinema-extension.js",
+    "./nav-attributes-extension": "./lib/nav-attributes-extension.js"
   },
   "imports": {
     "#package": "./package.json"

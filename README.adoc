@@ -62,6 +62,7 @@ It applies the following extensions in the proper order:
 * <<Root Component>>
 * <<Static Page>>
 * <<Asciinema>>
+* <<Navigation Attributes>>
 
 The extension accepts the following configuration options:
 
@@ -384,6 +385,36 @@ Optional attribute as a default value for asciinema option `cols`.
 
 autoPlay::
 Optional attribute as a default value for asciinema option `autoPlay`.
+
+=== Navigation Attributes
+
+*require name:* @springio/antora-extensions/nav-attributes
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+The purpose of this extension is to add additional attributes to the navigation tree so that they can be used by a UI bundle.
+Navigiation attributes can be provided as a list in your `antora.yml` files under the `ext.nav-attributes` key.
+
+For example:
+
+.antora.yml
+[,yaml]
+----
+name: my-project
+version: true
+# ...
+ext:
+  nav-attributes:
+  - path: "Home"
+    attributes: { icon: home }
+  - path: [ "Java APIs", "My Project" ]
+    attributes: { external: true }
+----
+
+Each item in the list must specify a `path` and the `attributes` to apply.
+
+The `path` may be a string (for a root path) or a list of strings (for a nested path).
+The path text must exactly match that of the corresponding `NavigationCatalog` item.
 
 ifndef::env-npm[]
 == Development Quickstart
