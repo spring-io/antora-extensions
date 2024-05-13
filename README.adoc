@@ -117,6 +117,32 @@ The extension also maps the latest release to a URL that leverages only the `${m
 NOTE: Filtering is intentionally performed on the tags rather than versions because the Spring team calculates versions by extracting the information from the Java based build.
 The amount of time to calculate the version is small, but adds up with lots of tags, and we'd like to avoid this computational cost on tags that are not being used.
 
+
+=== override-navigation-builder-extension
+
+*require name:* @springio/antora-extensions/override-navigation-builder-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+The purpose of this extension is override the navigation builder to work around https://gitlab.com/antora/antora/-/issues/701
+
+The summary is that this allows xref entries in the navigation to propagate roles to the model.
+The following will have a model that contains the role `custom`.
+
+[source,asciidoc]
+----
+* xref::index.adoc[Optional Text, role=custom]
+----
+
+The following will have a model that contains the roles `a b`.
+
+[source,asciidoc]
+----
+* xref::index.adoc[Optional Text, role=a b]
+----
+
+Additional attributes `title`, `target`, and `rel` are also propagated to the model.
+
 === Partial Build
 
 *require name:* @springio/antora-extensions/partial-build-extension

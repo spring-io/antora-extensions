@@ -3,6 +3,7 @@
 
 process.env.NODE_ENV = 'test'
 
+const { configureLogger } = require('@antora/logger')
 const chai = require('chai')
 const fsp = require('node:fs/promises')
 const http = require('http')
@@ -15,6 +16,7 @@ chai.use(require('chai-spies'))
 // see https://github.com/prodatakey/dirty-chai#plugin-assertions
 chai.use(require('dirty-chai'))
 
+const mockContentCatalog = require('./mock-content-catalog')(chai)
 const cleanDir = (dir, { create } = {}) =>
   fsp.rm(dir, { recursive: true, force: true }).then(() => (create ? fsp.mkdir(dir, { recursive: true }) : undefined))
 
@@ -85,5 +87,34 @@ const trapAsyncError = (fn, ...args) =>
       throw err
     }
   )
-
-module.exports = { cleanDir, expect: chai.expect, filterLines, heredoc, spy: chai.spy, startWebServer, trapAsyncError }
+const captureLogSync = (fn) => {
+  const messages = []
+  configureLogger({
+    level: 'all',
+    failureLevel: 'all',
+    destination: {
+      write (messageString) {
+        const { time, ...message } = JSON.parse(messageString)
+        messages.push(message)
+        return messageString.length
+      },
+    },
+  })
+  const returnValue = fn()
+  return Object.defineProperty(messages, 'withReturnValue', {
+    get () {
+      return () => ({ messages: this, returnValue })
+    },
+  })
+}
+module.exports = {
+  cleanDir,
+  expect: chai.expect,
+  filterLines,
+  heredoc,
+  spy: chai.spy,
+  startWebServer,
+  trapAsyncError,
+  mockContentCatalog,
+  captureLogSync,
+}

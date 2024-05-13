@@ -29,6 +29,8 @@
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
+    "./build-navigation": "./lib/navigation-builder/build-navigation.js",
+    "./override-navigation-builder-extension": "./lib/navigation-builder/override-navigation-builder-extension.js",
     "./docsearch-config.json.hbs": "./lib/docsearch-config.json.hbs",
     "./inject-collector-cache-config-extension": "./lib/inject-collector-cache-config-extension.js",
     "./latest-version-extension": "./lib/latest-version-extension.js",
@@ -50,17 +52,19 @@
     "lib"
   ],
   "dependencies": {
-    "cache-directory": "~2.0",
     "@antora/expand-path-helper": "~2.0",
     "archiver": "^5.3.1",
+    "asciinema-player": "^3.6.1",
+    "cache-directory": "~2.0",
+    "ci": "^2.3.0",
     "decompress": "4.2.1",
     "fast-xml-parser": "latest",
-    "handlebars": "latest",
-    "asciinema-player": "^3.6.1"
+    "handlebars": "latest"
   },
   "devDependencies": {
-    "@asciidoctor/tabs": "latest",
+    "@antora/content-classifier": "latest",
     "@asciidoctor/core": "latest",
+    "@asciidoctor/tabs": "latest",
     "chai": "~4.3",
     "chai-fs": "~2.0",
     "chai-spies": "~1.0",
