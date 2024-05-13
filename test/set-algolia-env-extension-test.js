@@ -4,7 +4,7 @@
 const { expect } = require('./harness')
 const { name: packageName } = require('#package')
 
-describe('extensions', () => {
+describe('set-algolia-env', () => {
   const ext = require(packageName + '/set-algolia-env-extension')
 
   describe('bootstrap', () => {
