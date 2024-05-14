@@ -4,6 +4,10 @@
 This document provides a summary of all notable changes to this project by release.
 For a detailed view of what's changed, refer to the {url-repo}/commits[commit history] of this project.
 
+== 1.11.0 (2024-05-14)
+
+_No changes since previous release._
+
 == 1.10.0 (2024-04-17)
 
 _No changes since previous release._
