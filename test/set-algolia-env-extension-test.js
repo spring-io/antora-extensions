@@ -15,7 +15,7 @@ describe('extensions', () => {
 
     it('should be able to call register function exported by extension', () => {
       ext.register.call()
-      expect(process.env.ALGOLIA_API_KEY).to.eql('9d489079e5ec46dbb238909fee5c9c29')
+      expect(process.env.ALGOLIA_API_KEY).to.eql('c2e84f15fa630d534f1c62b1c413bb77')
       expect(process.env.ALGOLIA_APP_ID).to.eql('WB1FQYI187')
       expect(process.env.ALGOLIA_INDEX_NAME).to.eql('springdocs')
     })
