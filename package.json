@@ -36,6 +36,7 @@
     "./latest-version-extension": "./lib/latest-version-extension.js",
     "./partial-build-extension": "./lib/partial-build-extension.js",
     "./publish-docsearch-config-extension": "./lib/publish-docsearch-config-extension.js",
+    "./root-attachments-extension": "./lib/root-attachments-extension.js",
     "./root-component-extension": "./lib/root-component-extension.js",
     "./tabs-migration-extension": "./lib/tabs-migration-extension.js",
     "./static-page-extension": "./lib/static-page-extension.js",

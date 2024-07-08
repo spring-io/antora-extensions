@@ -60,6 +60,7 @@ It applies the following extensions in the proper order:
 * <<Collector Cache Config>>
 * https://gitlab.com/antora/antora-collector-extension[@antora/collector-extension]
 * <<Root Component>>
+* <<Root Attachments>>
 * <<Static Page>>
 
 
@@ -314,6 +315,15 @@ The extension accepts several configuration options:
 
 root_component_name::
 A required attribute that indicates the name of the component that should not be included in the URLs.
+
+
+=== Root Attachments
+
+*require name:* @springio/antora-extensions/root-attachments-extension
+
+IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+This removes the `_attachments` portion of the URL from attachments.
 
 
 === Tabs Migration

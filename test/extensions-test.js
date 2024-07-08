@@ -42,6 +42,7 @@ describe('extensions', () => {
         `${packageName}/inject-collector-cache-config-extension`,
         '@antora/collector-extension',
         `${packageName}/root-component-extension`,
+        `${packageName}/root-attachments-extension`,
         `${packageName}/static-page-extension`,
       ])
     })
