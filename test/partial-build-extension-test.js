@@ -181,6 +181,28 @@ describe('partial-build-extension', () => {
       })
     })
 
+    it('should rewrite content sources when SNAPSHOT version not found if refname is HEAD', async () => {
+      const playBookDir = WORK_DIR
+      await fsp.mkdir(ospath.join(WORK_DIR, '.git'), { recursive: true })
+      await runScenario({
+        refname: 'HEAD',
+        version: '7.0.0-SNAPSHOT',
+        expectedRefs: { branches: ['HEAD'], tags: [], url: '.' },
+        playbookDir: playBookDir,
+      })
+    })
+
+    it('should rewrite content sources when release version not found if refname is HEAD', async () => {
+      const playBookDir = WORK_DIR
+      await fsp.mkdir(ospath.join(WORK_DIR, '.git'), { recursive: true })
+      await runScenario({
+        refname: 'HEAD',
+        version: '7.0.0',
+        expectedRefs: { branches: ['HEAD'], tags: [], url: '.' },
+        playbookDir: playBookDir,
+      })
+    })
+
     it('should error if refname is HEAD and version undefined', async () => {
       expect(await trapAsyncError(() => runScenario({ refname: 'HEAD' }))).to.throw(
         'When using author mode version is required. Specify config.version or env BUILD_VERSION'
