@@ -181,6 +181,18 @@ describe('partial-build-extension', () => {
       })
     })
 
+    it('should rewrite content sources if refname is HEAD and playbook in grandchild dir', async () => {
+      const playBookDir = ospath.join(WORK_DIR, 'docs/src/main/antora')
+      await fsp.mkdir(playBookDir, { recursive: true })
+      await fsp.mkdir(ospath.join(WORK_DIR, '.git'), { recursive: true })
+      await runScenario({
+        refname: 'HEAD',
+        version: '6.1.0-SNAPSHOT',
+        expectedRefs: { branches: ['HEAD'], tags: [], url: './../../../..' },
+        playbookDir: playBookDir,
+      })
+    })
+
     it('should rewrite content sources when SNAPSHOT version not found if refname is HEAD', async () => {
       const playBookDir = WORK_DIR
       await fsp.mkdir(ospath.join(WORK_DIR, '.git'), { recursive: true })
