@@ -35,6 +35,7 @@ describe('extensions', () => {
     it('should be able to call register function exported by extension', () => {
       ext.register.call(generatorContext, {})
       expect(generatorContext.required).eql([
+        `${packageName}/override-navigation-builder-extension`,
         `${packageName}/set-algolia-env-extension`,
         `${packageName}/partial-build-extension`,
         '@antora/atlas-extension',

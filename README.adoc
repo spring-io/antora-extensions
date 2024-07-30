@@ -53,6 +53,7 @@ IMPORTANT: Be sure to register this extension under the `antora.extensions` key 
 This extension applies the recommended Antora Extensions.
 It applies the following extensions in the proper order:
 
+* <<_override_navigation_builder_extension>>
 * <<Set Algolia Env>>
 * <<Partial Build>>
 * https://gitlab.com/antora/antora-atlas-extension[@antora/atlas-extension]
