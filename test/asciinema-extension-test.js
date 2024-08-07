@@ -138,7 +138,7 @@ describe('asciinema-extension', () => {
 
       expect(siteAsciiDocConfig.extensions.length).to.equal(1)
       expect(uiCatalog.files.length).to.equal(1)
-      expect(out).to.contains('video')
+      expect(out).to.contains('asciinema')
     })
 
     it('should work with duplicate blocks', async () => {
@@ -165,7 +165,7 @@ describe('asciinema-extension', () => {
 
       expect(siteAsciiDocConfig.extensions.length).to.equal(1)
       expect(uiCatalog.files.length).to.equal(1)
-      expect(out).to.contains('video')
+      expect(out).to.contains('asciinema')
     })
   })
 })
