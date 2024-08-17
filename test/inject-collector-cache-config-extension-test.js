@@ -185,7 +185,7 @@ describe('inject-collector-cache-config-extension', () => {
           },
           {
             run: {
-              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}' '${zipFileName}'`,
+              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
             },
           },
         ],
@@ -193,8 +193,67 @@ describe('inject-collector-cache-config-extension', () => {
       expect(actual).to.eql(expected)
       expect(generatorContext.messages).to.eql([
         `Unable to restore cache from ${httpServerUrl}/.cache/2c4fb2f-1.0.0.zip`,
-        `Configuring collector to cache '${scan}' at '${cache}' and zip the results at '${zipFileName}'`,
+        `Configuring collector to cache '${scan}' at '${cache}'`,
       ])
+      expect(fs.existsSync(zipFileName)).to.eql(false)
+      await generatorContext.beforePublish()
+      expect(fs.existsSync(zipFileName)).to.eql(true)
+    })
+
+    it('cache not found multiple scans', async () => {
+      const tag = createTag('1.0.0')
+      tag.origins[0].refhash = tag.origins[0].refhash.split('').reverse().join('')
+      // make multiple scan dirs
+      tag.origins[0].descriptor = {
+        ext: {
+          collector: [{ scan: { dir: './build/antora-resources' } }, { scan: { dir: './build/antora-resources-2' } }],
+        },
+      }
+      contentAggregate = [tag]
+      ext.register.call(generatorContext, { playbook })
+      await generatorContext.contentAggregated({ playbook, contentAggregate })
+      expect(fs.existsSync(ospath.join(cacheDir, 'collector-cache/spring-security'))).to.equal(true)
+      const actual = contentAggregate[0].origins[0].descriptor.ext
+      const scan = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources')
+      const scan2 = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources-2')
+      const cache = ospath.join(cacheDir, 'collector-cache/spring-security/2c4fb2f-1.0.0')
+      const zipFileName = ospath.join(
+        playbookDir,
+        'build/antora/inject-collector-cache-config-extension/.cache/2c4fb2f-1.0.0.zip'
+      )
+      const expected = {
+        collector: [
+          {
+            scan: {
+              dir: './build/antora-resources',
+            },
+          },
+          {
+            scan: {
+              dir: './build/antora-resources-2',
+            },
+          },
+          {
+            run: {
+              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
+            },
+          },
+          {
+            run: {
+              command: `node '${resolvedCacheScanDirIndexJs}' '${scan2}' '${cache}'`,
+            },
+          },
+        ],
+      }
+      expect(actual).to.eql(expected)
+      expect(generatorContext.messages).to.eql([
+        `Unable to restore cache from ${httpServerUrl}/.cache/2c4fb2f-1.0.0.zip`,
+        `Configuring collector to cache '${scan}' at '${cache}'`,
+        `Configuring collector to cache '${scan2}' at '${cache}'`,
+      ])
+      expect(fs.existsSync(zipFileName)).to.eql(false)
+      await generatorContext.beforePublish()
+      expect(fs.existsSync(zipFileName)).to.eql(true)
     })
     it('cache downloaded', async () => {
       const zipFileName = ospath.join(
@@ -259,16 +318,12 @@ describe('inject-collector-cache-config-extension', () => {
       const url = playbook.site.url
       const scan = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources')
       const cache = ospath.join(cacheDir, 'collector-cache/spring-security/6ca8fb4-1.0.0')
-      const zipFileName = ospath.join(
-        playbookDir,
-        'build/antora/inject-collector-cache-config-extension/.cache/6ca8fb4-1.0.0.zip'
-      )
       delete playbook.site.url
       ext.register.call(generatorContext, { playbook, config: { baseCacheUrl: url } })
       await generatorContext.contentAggregated({ playbook, contentAggregate })
       expect(generatorContext.messages).to.eql([
         `Unable to restore cache from ${httpServerUrl}/6ca8fb4-1.0.0.zip`,
-        `Configuring collector to cache '${scan}' at '${cache}' and zip the results at '${zipFileName}'`,
+        `Configuring collector to cache '${scan}' at '${cache}'`,
       ])
     })
   })
