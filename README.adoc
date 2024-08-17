@@ -80,6 +80,25 @@ antora:
       root_component_name: 'security'
 ----
 
+This is the equivalent of:
+
+[source,yml]
+----
+antora:
+  extensions:
+    - require: '@springio/antora-extensions/override-navigation-builder-extension'
+    - require: '@springio/antora-extensions/set-algolia-env-extension'
+    - require: '@springio/antora-extensions/partial-build-extension'
+    - require: '@antora/atlas-extension'
+    - require: '@springio/antora-extensions/latest-version-extension'
+    - require: '@springio/antora-extensions/inject-collector-cache-config-extension'
+    - require: '@antora/collector-extension'
+    - require: '@springio/antora-extensions/root-component-extension'
+      root_component_name: 'vault'
+    - require: '@springio/antora-extensions/root-attachments-extension'
+----
+
+
 === Set Algolia Env
 
 *require name:* @springio/antora-extensions/set-algolia-env-extension
