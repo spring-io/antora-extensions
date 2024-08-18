@@ -229,13 +229,13 @@ describe('inject-collector-cache-config-extension', () => {
             },
           },
           {
-            scan: {
-              dir: './build/antora-resources-2',
+            run: {
+              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
             },
           },
           {
-            run: {
-              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
+            scan: {
+              dir: './build/antora-resources-2',
             },
           },
           {
