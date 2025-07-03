@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@antora/content-classifier": "latest",
+    "@antora/content-aggregator": "latest",
     "@asciidoctor/core": "latest",
     "@asciidoctor/tabs": "latest",
     "chai": "~4.3",

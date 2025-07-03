@@ -215,6 +215,28 @@ describe('partial-build-extension', () => {
       })
     })
 
+    it('should rewrite content sources if refname is branch and multiple sources exist', async () => {
+      playbook.content.sources = [
+        {
+          url: repositoryUrl,
+          branches: ['5.0.x', '5.*'],
+          tags: ['5.*'],
+          startPath: 'docs',
+        },
+        {
+          url: repositoryUrl,
+          branches: ['main', '6.*'],
+          tags: ['6.*'],
+          startPath: 'scod',
+        },
+      ]
+      await runScenario({
+        refname: 'main',
+        version: '6.1.0-SNAPSHOT',
+        expectedRefs: { branches: ['main'], tags: [], startPath: 'scod' },
+      })
+    })
+
     it('should error if refname is HEAD and version undefined', async () => {
       expect(await trapAsyncError(() => runScenario({ refname: 'HEAD' }))).to.throw(
         'When using author mode version is required. Specify config.version or env BUILD_VERSION'
@@ -309,6 +331,13 @@ describe('partial-build-extension', () => {
       })
 
       it('should look up maven version in git repository if not specified', async () => {
+        playbook.content.sources = [
+          {
+            branches: ['main', '3.*'],
+            tags: ['3.*'],
+            startPath: 'docs',
+          },
+        ]
         await runScenario({
           refname: '3.2.0',
           rawgitUrl: httpServerUrl,
