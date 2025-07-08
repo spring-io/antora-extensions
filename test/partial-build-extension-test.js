@@ -62,11 +62,13 @@ describe('partial-build-extension', () => {
     it('should register listener if only refname key is set', () => {
       ext.register.call(generatorContext, { config: { refname: 'main' } })
       expect(generatorContext.playbookBuilt).to.be.instanceOf(Function)
+      expect(generatorContext.contentAggregated).to.be.instanceOf(Function)
     })
 
     it('should not register listener if refname key is not set', () => {
       ext.register.call(generatorContext, {})
       expect(generatorContext.playbookBuilt).to.be.undefined()
+      expect(generatorContext.contentAggregated).to.be.undefined()
     })
   })
 
@@ -213,6 +215,82 @@ describe('partial-build-extension', () => {
         expectedRefs: { branches: ['HEAD'], tags: [], url: '.' },
         playbookDir: playBookDir,
       })
+    })
+
+    it('should not rewrite content sources when multiple sources', async () => {
+      playbook.dir = WORK_DIR
+      playbook.asciidoc.attributes = { 'primary-site-manifest-url': ospath.join(FIXTURES_DIR, 'site-manifest.json') }
+      playbook.content.sources = [
+        {
+          url: '.',
+          branches: ['main'],
+          startPaths: ['new-start-path'],
+        },
+        {
+          url: '.',
+          branches: ['1.0.x'],
+          startPaths: ['old-start-path'],
+        },
+      ]
+      ext.register.call(generatorContext, { config: { refname: 'HEAD', version: '7.0.0-SNAPSHOT' } })
+      generatorContext.updateVariables({ playbook })
+      await generatorContext.playbookBuilt(generatorContext.variables)
+      expect(playbook.content.sources).to.eql([
+        {
+          url: '.',
+          branches: ['main'],
+          startPaths: ['new-start-path'],
+        },
+        {
+          url: '.',
+          branches: ['1.0.x'],
+          startPaths: ['old-start-path'],
+        },
+      ])
+    })
+
+    it('should disable contentAggregated when full build', async () => {
+      playbook.dir = WORK_DIR
+      await fsp.writeFile(ospath.join(playbook.dir, '.full-build'), '')
+      ext.register.call(generatorContext, { config: { refname: 'main', version: '7.0.0-SNAPSHOT' } })
+      generatorContext.updateVariables({ playbook })
+      const contentAggregate = [
+        {
+          origins: [{ branch: 'main' }],
+        },
+        {
+          origins: [{ branch: '1.0.x' }],
+        },
+      ]
+      await generatorContext.contentAggregated({ playbook, contentAggregate })
+      expect(contentAggregate.length).to.eql(2)
+    })
+
+    it('contentAggregated should remove when activated', async () => {
+      playbook.dir = WORK_DIR
+      ext.register.call(generatorContext, { config: { refname: '1.0.x', version: '1.0.0-SNAPSHOT' } })
+      generatorContext.updateVariables({ playbook })
+      const contentAggregate = [
+        {
+          origins: [{ branch: 'main' }],
+        },
+        {
+          origins: [{ branch: '1.0.x' }],
+        },
+        {
+          origins: [{ branch: '2.0.x' }],
+        },
+      ]
+      await generatorContext.contentAggregated({ playbook, contentAggregate })
+      expect(contentAggregate.length).to.eql(1)
+      expect(contentAggregate[0].origins[0].branch).to.eql('1.0.x')
+    })
+
+    it('contentAggregated should not remove when refname not specified', async () => {
+      playbook.dir = WORK_DIR
+      ext.register.call(generatorContext, { config: { version: '1.0.0-SNAPSHOT' } })
+      generatorContext.updateVariables({ playbook })
+      expect(generatorContext.contentAggregated).undefined()
     })
 
     it('should error if refname is HEAD and version undefined', async () => {
