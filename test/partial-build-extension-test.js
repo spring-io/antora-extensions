@@ -449,6 +449,40 @@ describe('partial-build-extension', () => {
           'https://raw.githubusercontent.com/org/repo/6.0.0/gradle.properties',
         ])
       })
+
+      it('multiple sources defaults primary-site-url and primary-site-manifest-url', async () => {
+        playbook.dir = WORK_DIR
+        playbook.site.url = httpServerUrl
+        playbook.content.sources = [
+          {
+            url: '.',
+            branches: ['main'],
+            startPaths: ['new-start-path'],
+          },
+          {
+            url: '.',
+            branches: ['1.0.x'],
+            startPaths: ['old-start-path'],
+          },
+        ]
+        ext.register.call(generatorContext, { config: { refname: 'HEAD', version: '7.0.0-SNAPSHOT' } })
+        generatorContext.updateVariables({ playbook })
+        await generatorContext.playbookBuilt(generatorContext.variables)
+        expect(playbook.content.sources).to.eql([
+          {
+            url: '.',
+            branches: ['main'],
+            startPaths: ['new-start-path'],
+          },
+          {
+            url: '.',
+            branches: ['1.0.x'],
+            startPaths: ['old-start-path'],
+          },
+        ])
+        expect(playbook.asciidoc.attributes['primary-site-manifest-url']).to.eql(`${httpServerUrl}/site-manifest.json`)
+        expect(playbook.asciidoc.attributes['primary-site-url']).to.eql('.')
+      })
     })
   })
 })
