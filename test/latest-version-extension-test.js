@@ -145,6 +145,12 @@ describe('latest-version-extension', () => {
       expect(refnames).to.eql(['5.6.10'])
     })
 
+    it('handles hotfixes tags', async () => {
+      contentAggregate = [createTag('5.6.8.1'), createTag('5.6.8'), createTag('5.6.8.2')]
+      const refnames = await mapContentAggregateToRefname()
+      expect(refnames).to.eql(['5.6.8.2'])
+    })
+
     it('handles tags prefixed with v', async () => {
       contentAggregate = [createTag('v6.0.1'), createTag('v6.0.0')]
       const refnames = await mapContentAggregateToRefname()
@@ -206,7 +212,7 @@ describe('latest-version-extension', () => {
     it('handles invalid version format with proper message', async () => {
       contentAggregate = [createTag('6.0.0-M3-m')]
       expect(await trapAsyncError(runContentAggregate)).to.throw(
-        'Cannot parse version = 6.0.0-M3-m with regex /^v?(\\d+)\\.(\\d+)\\.(\\d+)(?:-(RC|M)(\\d+))?$/'
+        'Cannot parse version = 6.0.0-M3-m with regex /^v?(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(RC|M)(\\d+))?$/'
       )
     })
   })
