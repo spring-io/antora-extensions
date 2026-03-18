@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@antora/content-classifier": "latest",
-    "@asciidoctor/core": "~2.2",
+    "@asciidoctor/core": "~3.0",
     "@asciidoctor/tabs": "latest",
     "chai": "~4.3",
     "chai-fs": "~2.0",
