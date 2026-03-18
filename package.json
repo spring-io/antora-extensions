@@ -67,7 +67,7 @@
     "@antora/content-classifier": "latest",
     "@asciidoctor/core": "latest",
     "@asciidoctor/tabs": "latest",
-    "chai": "~4.3",
+    "chai": "~6.2",
     "chai-fs": "~2.0",
     "chai-spies": "~1.0",
     "dirty-chai": "~2.0",
