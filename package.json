@@ -55,7 +55,7 @@
   ],
   "dependencies": {
     "@antora/expand-path-helper": "~3.0",
-    "archiver": "^5.3.1",
+    "archiver": "^7.0.1",
     "asciinema-player": "^3.6.1",
     "cache-directory": "~2.0",
     "ci": "^2.3.0",
