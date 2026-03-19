@@ -200,7 +200,7 @@ describe('inject-collector-cache-config-extension', () => {
       expect(fs.existsSync(zipFileName)).to.eql(true)
     })
 
-    it('cache not found multiple scans', async () => {
+    it('cache not with multiple scan [{ scan: { dir: }, { scan: dir: } ]', async () => {
       const tag = createTag('1.0.0')
       tag.origins[0].refhash = tag.origins[0].refhash.split('').reverse().join('')
       // make multiple scan dirs
@@ -236,6 +236,63 @@ describe('inject-collector-cache-config-extension', () => {
           {
             scan: {
               dir: './build/antora-resources-2',
+            },
+          },
+          {
+            run: {
+              command: `node '${resolvedCacheScanDirIndexJs}' '${scan2}' '${cache}'`,
+            },
+          },
+        ],
+      }
+      expect(actual).to.eql(expected)
+      expect(generatorContext.messages).to.eql([
+        `Unable to restore cache from ${httpServerUrl}/.cache/2c4fb2f-1.0.0.zip`,
+        `Configuring collector to cache '${scan}' at '${cache}'`,
+        `Configuring collector to cache '${scan2}' at '${cache}'`,
+      ])
+      expect(fs.existsSync(zipFileName)).to.eql(false)
+      await generatorContext.beforePublish()
+      expect(fs.existsSync(zipFileName)).to.eql(true)
+    })
+
+    it('cache not found with multiple scan dirs { run: , scan [ { dir: }, { dir: } ] }', async () => {
+      const tag = createTag('1.0.0')
+      tag.origins[0].refhash = tag.origins[0].refhash.split('').reverse().join('')
+      // make multiple scan dirs
+      tag.origins[0].descriptor = {
+        ext: {
+          collector: [
+            {
+              run: { command: './mvnw -B validate process-resources dependency:unpack -am -Pantora-process-resources' },
+              scan: [{ dir: 'target/classes/antora-resources/' }, { dir: 'target/antora/' }],
+            },
+          ],
+        },
+      }
+      contentAggregate = [tag]
+      ext.register.call(generatorContext, { playbook })
+      await generatorContext.contentAggregated({ playbook, contentAggregate })
+      expect(fs.existsSync(ospath.join(cacheDir, 'collector-cache/spring-security'))).to.equal(true)
+      const actual = contentAggregate[0].origins[0].descriptor.ext
+      const scan = ospath.join(cacheDir, 'collector/spring-security/target/classes/antora-resources')
+      const scan2 = ospath.join(cacheDir, 'collector/spring-security/target/antora')
+      const cache = ospath.join(cacheDir, 'collector-cache/spring-security/2c4fb2f-1.0.0')
+      const zipFileName = ospath.join(
+        playbookDir,
+        'build/antora/inject-collector-cache-config-extension/.cache/2c4fb2f-1.0.0.zip'
+      )
+      const expected = {
+        collector: [
+          {
+            run: {
+              command: './mvnw -B validate process-resources dependency:unpack -am -Pantora-process-resources',
+            },
+            scan: [{ dir: 'target/classes/antora-resources/' }, { dir: 'target/antora/' }],
+          },
+          {
+            run: {
+              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
             },
           },
           {
