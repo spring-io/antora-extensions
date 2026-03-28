@@ -170,12 +170,19 @@ describe('inject-collector-cache-config-extension', () => {
       await generatorContext.contentAggregated({ playbook, contentAggregate })
       expect(fs.existsSync(ospath.join(cacheDir, 'collector-cache/spring-security'))).to.equal(true)
       const actual = contentAggregate[0].origins[0].descriptor.ext
-      const scan = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources')
       const cache = ospath.join(cacheDir, 'collector-cache/spring-security/2c4fb2f-1.0.0')
       const zipFileName = ospath.join(
         playbookDir,
         'build/antora/inject-collector-cache-config-extension/.cache/2c4fb2f-1.0.0.zip'
       )
+      const cachedCollectorConfig = [
+        {
+          run: {
+            command: `\${{env.NODE}} '${resolvedCacheScanDirIndexJs}' '.' '${cache}'`,
+            dir: './build/antora-resources',
+          },
+        },
+      ]
       const expected = {
         collector: [
           {
@@ -183,17 +190,13 @@ describe('inject-collector-cache-config-extension', () => {
               dir: './build/antora-resources',
             },
           },
-          {
-            run: {
-              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
-            },
-          },
+          ...cachedCollectorConfig,
         ],
       }
       expect(actual).to.eql(expected)
       expect(generatorContext.messages).to.eql([
         `Unable to restore cache from ${httpServerUrl}/.cache/2c4fb2f-1.0.0.zip`,
-        `Configuring collector to cache '${scan}' at '${cache}'`,
+        `Configuring collector to cache '${JSON.stringify(cachedCollectorConfig)}'`,
       ])
       expect(fs.existsSync(zipFileName)).to.eql(false)
       await generatorContext.beforePublish()
@@ -214,13 +217,27 @@ describe('inject-collector-cache-config-extension', () => {
       await generatorContext.contentAggregated({ playbook, contentAggregate })
       expect(fs.existsSync(ospath.join(cacheDir, 'collector-cache/spring-security'))).to.equal(true)
       const actual = contentAggregate[0].origins[0].descriptor.ext
-      const scan = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources')
-      const scan2 = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources-2')
       const cache = ospath.join(cacheDir, 'collector-cache/spring-security/2c4fb2f-1.0.0')
       const zipFileName = ospath.join(
         playbookDir,
         'build/antora/inject-collector-cache-config-extension/.cache/2c4fb2f-1.0.0.zip'
       )
+      const cachedCollectorConfig1 = [
+        {
+          run: {
+            command: `\${{env.NODE}} '${resolvedCacheScanDirIndexJs}' '.' '${cache}'`,
+            dir: './build/antora-resources',
+          },
+        },
+      ]
+      const cachedCollectorConfig2 = [
+        {
+          run: {
+            command: `\${{env.NODE}} '${resolvedCacheScanDirIndexJs}' '.' '${cache}'`,
+            dir: './build/antora-resources-2',
+          },
+        },
+      ]
       const expected = {
         collector: [
           {
@@ -228,28 +245,20 @@ describe('inject-collector-cache-config-extension', () => {
               dir: './build/antora-resources',
             },
           },
-          {
-            run: {
-              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
-            },
-          },
+          ...cachedCollectorConfig1,
           {
             scan: {
               dir: './build/antora-resources-2',
             },
           },
-          {
-            run: {
-              command: `node '${resolvedCacheScanDirIndexJs}' '${scan2}' '${cache}'`,
-            },
-          },
+          ...cachedCollectorConfig2,
         ],
       }
       expect(actual).to.eql(expected)
       expect(generatorContext.messages).to.eql([
         `Unable to restore cache from ${httpServerUrl}/.cache/2c4fb2f-1.0.0.zip`,
-        `Configuring collector to cache '${scan}' at '${cache}'`,
-        `Configuring collector to cache '${scan2}' at '${cache}'`,
+        `Configuring collector to cache '${JSON.stringify(cachedCollectorConfig1)}'`,
+        `Configuring collector to cache '${JSON.stringify(cachedCollectorConfig2)}'`,
       ])
       expect(fs.existsSync(zipFileName)).to.eql(false)
       await generatorContext.beforePublish()
@@ -275,13 +284,22 @@ describe('inject-collector-cache-config-extension', () => {
       await generatorContext.contentAggregated({ playbook, contentAggregate })
       expect(fs.existsSync(ospath.join(cacheDir, 'collector-cache/spring-security'))).to.equal(true)
       const actual = contentAggregate[0].origins[0].descriptor.ext
-      const scan = ospath.join(cacheDir, 'collector/spring-security/target/classes/antora-resources')
-      const scan2 = ospath.join(cacheDir, 'collector/spring-security/target/antora')
       const cache = ospath.join(cacheDir, 'collector-cache/spring-security/2c4fb2f-1.0.0')
       const zipFileName = ospath.join(
         playbookDir,
         'build/antora/inject-collector-cache-config-extension/.cache/2c4fb2f-1.0.0.zip'
       )
+      const cachedCollectorConfig1 = [
+        {
+          run: {
+            command: `\${{env.NODE}} '${resolvedCacheScanDirIndexJs}' '.' '${cache}'`,
+            dir: 'target/classes/antora-resources/',
+          },
+        },
+      ]
+      const cachedCollectorConfig2 = [
+        { run: { command: `\${{env.NODE}} '${resolvedCacheScanDirIndexJs}' '.' '${cache}'`, dir: 'target/antora/' } },
+      ]
       const expected = {
         collector: [
           {
@@ -290,23 +308,15 @@ describe('inject-collector-cache-config-extension', () => {
             },
             scan: [{ dir: 'target/classes/antora-resources/' }, { dir: 'target/antora/' }],
           },
-          {
-            run: {
-              command: `node '${resolvedCacheScanDirIndexJs}' '${scan}' '${cache}'`,
-            },
-          },
-          {
-            run: {
-              command: `node '${resolvedCacheScanDirIndexJs}' '${scan2}' '${cache}'`,
-            },
-          },
+          ...cachedCollectorConfig1,
+          ...cachedCollectorConfig2,
         ],
       }
       expect(actual).to.eql(expected)
       expect(generatorContext.messages).to.eql([
         `Unable to restore cache from ${httpServerUrl}/.cache/2c4fb2f-1.0.0.zip`,
-        `Configuring collector to cache '${scan}' at '${cache}'`,
-        `Configuring collector to cache '${scan2}' at '${cache}'`,
+        `Configuring collector to cache '${JSON.stringify(cachedCollectorConfig1)}'`,
+        `Configuring collector to cache '${JSON.stringify(cachedCollectorConfig2)}'`,
       ])
       expect(fs.existsSync(zipFileName)).to.eql(false)
       await generatorContext.beforePublish()
@@ -373,14 +383,21 @@ describe('inject-collector-cache-config-extension', () => {
     })
     it('configured cache url', async () => {
       const url = playbook.site.url
-      const scan = ospath.join(cacheDir, 'collector/spring-security/build/antora-resources')
       const cache = ospath.join(cacheDir, 'collector-cache/spring-security/6ca8fb4-1.0.0')
       delete playbook.site.url
       ext.register.call(generatorContext, { playbook, config: { baseCacheUrl: url } })
       await generatorContext.contentAggregated({ playbook, contentAggregate })
+      const cachedCollectorConfig = [
+        {
+          run: {
+            command: `\${{env.NODE}} '${resolvedCacheScanDirIndexJs}' '.' '${cache}'`,
+            dir: './build/antora-resources',
+          },
+        },
+      ]
       expect(generatorContext.messages).to.eql([
         `Unable to restore cache from ${httpServerUrl}/6ca8fb4-1.0.0.zip`,
-        `Configuring collector to cache '${scan}' at '${cache}'`,
+        `Configuring collector to cache '${JSON.stringify(cachedCollectorConfig)}'`,
       ])
     })
   })
