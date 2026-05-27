@@ -369,7 +369,9 @@ describe('partial-build-extension', () => {
               version: '6.1.0-SNAPSHOT',
             })
           )
-        ).to.throw('connect ECONNREFUSED')
+        )
+          .to.throw()
+          .with.property('code', 'ECONNREFUSED')
       })
 
       it('should look up gradle version in git repository if not specified', async () => {
