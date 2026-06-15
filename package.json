@@ -75,7 +75,7 @@
     "eslint-config-standard": "~17.1",
     "mocha": "~11.7",
     "nyc": "~18.0",
-    "prettier-eslint": "~16.4",
+    "prettier-eslint": "~17.0",
     "simple-get": "latest"
   },
   "keywords": [
