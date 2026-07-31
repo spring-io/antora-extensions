@@ -250,6 +250,28 @@ describe('latest-version-extension', () => {
         ],
       ])
     })
+
+    // works around the Maven/Gradle plugins not supporting -INTERNAL-SNAPSHOT version
+    it('version with -INTERNAL suffix produces versionSegment with -INTERNAL', async () => {
+      contentCatalog = createContentCatalog([createVersion('6.1.0-INTERNAL', '-SNAPSHOT')])
+      const versions = await runComponentsRegistered()
+      expect(versions).to.eql([
+        [
+          { version: '6.1.0-INTERNAL', versionSegment: '6.1-INTERNAL-SNAPSHOT' },
+        ],
+      ])
+    })
+
+    it('-INTERNAL-SNAPSHOT prerelease maps version segment with -INTERNAL-SNAPSHOT', async () => {
+      contentCatalog = createContentCatalog([createVersion('6.1.0', '-INTERNAL-SNAPSHOT')])
+      const versions = await runComponentsRegistered()
+      expect(versions).to.eql([
+        [
+          { version: '6.1.0', versionSegment: '6.1-INTERNAL-SNAPSHOT' },
+        ],
+      ])
+    })
+
   })
 
   function registerWithExtensions (extensions) {
