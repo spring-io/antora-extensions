@@ -1,0 +1,50 @@
+name: Automerge
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+    branches: [main]
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  automerge:
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+    - name: Enable auto-merge for eligible pull requests
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
+      run: |
+        if [ "$PR_AUTHOR" = 'dependabot[bot]' ]; then
+          echo "$PR_AUTHOR is dependabot; eligible for auto-merge"
+        else
+          permission=$(gh api "repos/$GH_REPO/collaborators/$PR_AUTHOR/permission" --jq .permission)
+          echo "$PR_AUTHOR has '$permission' permission"
+          case "$permission" in
+            write|maintain|admin) ;;
+            *)
+              echo "$PR_AUTHOR does not have write access; skipping auto-merge"
+              exit 0
+              ;;
+          esac
+        fi
+
+        commits_json=$(gh pr view "$PR_NUMBER" --json commits --jq '.commits')
+        mapfile -t commit_subjects < <(jq -r '.[].messageHeadline' <<<"$commits_json")
+        mapfile -t commit_shas < <(jq -r '.[].oid[0:7]' <<<"$commits_json")
+
+        subject="Merge gh-$PR_NUMBER - $PR_TITLE"
+        if [ "${#commit_subjects[@]}" -eq 1 ] && [ "${commit_subjects[0]}" = "$PR_TITLE" ]; then
+          body=""
+        else
+          body=$(for i in "${!commit_subjects[@]}"; do printf -- '- %s %s\n' "${commit_shas[$i]}" "${commit_subjects[$i]}"; done)
+        fi
+
+        gh pr merge --auto --merge --subject "$subject" --body "$body" "$PR_URL"
