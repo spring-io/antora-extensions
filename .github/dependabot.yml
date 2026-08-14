@@ -10,6 +10,13 @@ updates:
     open-pull-requests-limit: 20
     schedule:
       interval: "daily"
+    ignore:
+      # eslint 9+ requires flat config, which is incompatible with this repo's .eslintrc
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      # Antora's asciidoc-loader only supports Asciidoctor ~2.2/2.6, not 3.x/4.x
+      - dependency-name: "@asciidoctor/core"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
