@@ -15,6 +15,7 @@ jobs:
     - name: Enable auto-merge for eligible pull requests
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
         PR_URL: ${{ github.event.pull_request.html_url }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
         PR_AUTHOR: ${{ github.event.pull_request.user.login }}
@@ -23,7 +24,7 @@ jobs:
         if [ "$PR_AUTHOR" = 'dependabot[bot]' ]; then
           echo "$PR_AUTHOR is dependabot; eligible for auto-merge"
         else
-          permission=$(gh api "repos/${{ github.repository }}/collaborators/$PR_AUTHOR/permission" --jq .permission)
+          permission=$(gh api "repos/$GH_REPO/collaborators/$PR_AUTHOR/permission" --jq .permission)
           echo "$PR_AUTHOR has '$permission' permission"
           case "$permission" in
             write|maintain|admin) ;;
