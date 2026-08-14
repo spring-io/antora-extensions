@@ -212,7 +212,7 @@ describe('latest-version-extension', () => {
     it('handles invalid version format with proper message', async () => {
       contentAggregate = [createTag('6.0.0-M3-m')]
       expect(await trapAsyncError(runContentAggregate)).to.throw(
-        'Cannot parse version = 6.0.0-M3-m with regex /^v?(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(RC|M)(\\d+))?$/'
+        'Cannot parse version = 6.0.0-M3-m with regex /^v?(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-INTERNAL)?(?:-(RC|M)(\\d+))?$/'
       )
     })
   })
@@ -249,6 +249,19 @@ describe('latest-version-extension', () => {
           { version: '6.1.0', versionSegment: '6.1-SNAPSHOT' },
         ],
       ])
+    })
+
+    // works around the Maven/Gradle plugins not supporting -INTERNAL-SNAPSHOT version
+    it('version with -INTERNAL suffix produces versionSegment with -INTERNAL', async () => {
+      contentCatalog = createContentCatalog([createVersion('6.1.0-INTERNAL', '-SNAPSHOT')])
+      const versions = await runComponentsRegistered()
+      expect(versions).to.eql([[{ version: '6.1.0-INTERNAL', versionSegment: '6.1-INTERNAL-SNAPSHOT' }]])
+    })
+
+    it('-INTERNAL-SNAPSHOT prerelease maps version segment with -INTERNAL-SNAPSHOT', async () => {
+      contentCatalog = createContentCatalog([createVersion('6.1.0', '-INTERNAL-SNAPSHOT')])
+      const versions = await runComponentsRegistered()
+      expect(versions).to.eql([[{ version: '6.1.0', versionSegment: '6.1-INTERNAL-SNAPSHOT' }]])
     })
   })
 

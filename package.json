@@ -1,6 +1,6 @@
 {
   "name": "@springio/antora-extensions",
-  "version": "1.14.12",
+  "version": "1.14.13",
   "description": "Antora extensions that support the Spring documentation.",
   "license": "ASL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
@@ -64,8 +64,7 @@
     "handlebars": "latest"
   },
   "devDependencies": {
-    "@antora/content-classifier": "latest",
-    "@asciidoctor/core": "~2.2",
+    "@antora/content-classifier": "3.2.0-rc.3",
     "@asciidoctor/tabs": "latest",
     "chai": "~4.3",
     "chai-fs": "~2.0",
@@ -73,7 +72,7 @@
     "dirty-chai": "~2.0",
     "eslint": "~8.33",
     "eslint-config-standard": "~17.1",
-    "mocha": "~11.7",
+    "mocha": "~11.8",
     "nyc": "~18.0",
     "prettier-eslint": "~16.4",
     "simple-get": "latest"
