@@ -53,7 +53,6 @@ IMPORTANT: Be sure to register this extension under the `antora.extensions` key 
 This extension applies the recommended Antora Extensions.
 It applies the following extensions in the proper order:
 
-* <<_override_navigation_builder_extension>>
 * <<Set Algolia Env>>
 * <<Partial Build>>
 * https://gitlab.com/antora/antora-atlas-extension[@antora/atlas-extension]
@@ -86,7 +85,6 @@ This is the equivalent of:
 ----
 antora:
   extensions:
-    - require: '@springio/antora-extensions/override-navigation-builder-extension'
     - require: '@springio/antora-extensions/set-algolia-env-extension'
     - require: '@springio/antora-extensions/partial-build-extension'
     - require: '@antora/atlas-extension'
@@ -144,6 +142,9 @@ The amount of time to calculate the version is small, but adds up with lots of t
 *require name:* @springio/antora-extensions/override-navigation-builder-extension
 
 IMPORTANT: Be sure to register this extension under the `antora.extensions` key in the playbook, not the `asciidoc.extensions` key!
+
+DEPRECATED: This extension is no longer applied by default by the <<_antora-extensions>> bundle.
+Antora 3.2.0-alpha.9 and later already propagate roles onto navigation entries natively (see https://gitlab.com/antora/antora/-/issues/701), so upgrade Antora and remove this extension from your playbook instead of registering it explicitly.
 
 The purpose of this extension is override the navigation builder to work around https://gitlab.com/antora/antora/-/issues/701
 
