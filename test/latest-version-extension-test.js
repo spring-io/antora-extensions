@@ -212,7 +212,7 @@ describe('latest-version-extension', () => {
     it('handles invalid version format with proper message', async () => {
       contentAggregate = [createTag('6.0.0-M3-m')]
       expect(await trapAsyncError(runContentAggregate)).to.throw(
-        'Cannot parse version = 6.0.0-M3-m with regex /^v?(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(RC|M)(\\d+))?$/'
+        'Cannot parse version = 6.0.0-M3-m with regex /^v?(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-INTERNAL)?(?:-(RC|M)(\\d+))?$/'
       )
     })
   })
@@ -271,7 +271,6 @@ describe('latest-version-extension', () => {
         ],
       ])
     })
-
   })
 
   function registerWithExtensions (extensions) {
