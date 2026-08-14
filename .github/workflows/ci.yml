@@ -3,10 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches: ['**']
-    paths-ignore: ['*.adoc']
   pull_request:
     branches: [main]
-    paths-ignore: ['*.adoc']
   schedule:
   - cron: '45 2 * * TUE'
 concurrency:
