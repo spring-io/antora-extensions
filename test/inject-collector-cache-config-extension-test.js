@@ -62,6 +62,7 @@ describe('inject-collector-cache-config-extension', () => {
       return {
         info: appendMessage,
         debug: appendMessage,
+        error: appendMessage,
       }
     },
     updateVariables (updates) {
@@ -158,9 +159,23 @@ describe('inject-collector-cache-config-extension', () => {
         response.writeHead(500, { 'Content-Type': 'text/html' })
         response.end('<!DOCTYPE html><html><body>Error</body></html>', 'utf8')
       })
+      const cacheUrl = `${httpServerUrl}/.cache/6ca8fb4-1.0.0.zip`
       expect(await trapAsyncError(generatorContext.contentAggregated, { playbook, contentAggregate })).to.throws(
-        `${httpServerUrl}/.cache/6ca8fb4-1.0.0.zip returned response code 500 (Internal Server Error)`
+        `${cacheUrl} returned response code 500 (Internal Server Error)`
       )
+      expect(generatorContext.messages).to.eql([
+        `Failed to fetch ${cacheUrl} returned response code 500 (Internal Server Error)`,
+      ])
+    })
+
+    it('cache network error logs the url', async () => {
+      ext.register.call(generatorContext, { playbook })
+      const cacheUrl = `${httpServerUrl}/.cache/6ca8fb4-1.0.0.zip`
+      await httpServer.shutdown()
+      const err = await trapAsyncError(generatorContext.contentAggregated, { playbook, contentAggregate })
+      expect(err).to.throw().with.property('code', 'ECONNREFUSED')
+      expect(generatorContext.messages).to.have.lengthOf(1)
+      expect(generatorContext.messages[0]).to.include(cacheUrl)
     })
     it('cache not found', async () => {
       const tag = createTag('1.0.0')
