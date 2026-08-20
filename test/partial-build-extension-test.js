@@ -13,6 +13,7 @@ describe('partial-build-extension', () => {
   const ext = require(packageName + '/partial-build-extension')
 
   const createGeneratorContext = () => ({
+    messages: [],
     variables: {},
     once (eventName, fn) {
       this[eventName] = fn
@@ -20,6 +21,17 @@ describe('partial-build-extension', () => {
     require (request) {
       if (request === 'isomorphic-git') return createIsomorphicGitStub()
       return require(request)
+    },
+    getLogger (name) {
+      const messages = this.messages
+      const appendMessage = function (message) {
+        messages.push(message)
+      }
+      return {
+        info: appendMessage,
+        debug: appendMessage,
+        error: appendMessage,
+      }
     },
     updateVariables (updates) {
       Object.assign(this.variables, updates)
@@ -360,11 +372,12 @@ describe('partial-build-extension', () => {
 
       it('should throw error when downloading playbook from primary site if connect refused', async () => {
         await httpServer.shutdown()
+        const manifestUrl = `${httpServerUrl}/no-such-manifest.json`
         expect(
           await trapAsyncError(() =>
             runScenario({
               siteUrl: httpServerUrl,
-              attributes: { 'primary-site-manifest-url': `${httpServerUrl}/no-such-manifest.json` },
+              attributes: { 'primary-site-manifest-url': manifestUrl },
               refname: 'main',
               version: '6.1.0-SNAPSHOT',
             })
@@ -372,6 +385,8 @@ describe('partial-build-extension', () => {
         )
           .to.throw()
           .with.property('code', 'ECONNREFUSED')
+        expect(generatorContext.messages).to.have.lengthOf(1)
+        expect(generatorContext.messages[0]).to.include(manifestUrl)
       })
 
       it('should look up gradle version in git repository if not specified', async () => {
